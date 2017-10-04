@@ -5,6 +5,8 @@
 
 #include "SystemInformation.hpp"
 
+#include "Input.hpp"
+
 #include <SFML\Graphics\RenderTarget.hpp>
 #include <SFML\Graphics\RenderStates.hpp>
 
