@@ -1,0 +1,11 @@
+#ifndef SYSTEM_INFORMATION_HPP
+#define SYSTEM_INFORMATION_HPP
+
+#define WNDH 920
+#define WNDW 1408
+#define FRAME_RATE 100
+#define RENDER_COMPENSATION 3.0f / 4.0f
+#define PX_PER_M 8.72e-10
+#define YEARS_PER_S 0.5
+
+#endif
