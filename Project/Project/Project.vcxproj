@@ -165,6 +165,7 @@
     <ClCompile Include="Planet.cpp" />
     <ClCompile Include="PlanetSystem.cpp" />
     <ClCompile Include="Projectile.cpp" />
+    <ClCompile Include="ProjectileFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Input.hpp" />
@@ -173,6 +174,7 @@
     <ClInclude Include="Planet.hpp" />
     <ClInclude Include="PlanetSystem.hpp" />
     <ClInclude Include="Projectile.hpp" />
+    <ClInclude Include="ProjectileFactory.hpp" />
     <ClInclude Include="Singleton.hpp" />
     <ClInclude Include="SystemInformation.hpp" />
     <ClInclude Include="Vector2.hpp" />

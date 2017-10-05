@@ -1,6 +1,7 @@
 #ifndef ORBIT_SIMULATION_HPP
 #define ORBIT_SIMULATION_HPP
 #include <SFML\Graphics\Drawable.hpp>
+#include <vector>
 
 namespace sf
 {
@@ -9,6 +10,7 @@ namespace sf
 }
 class PlanetSystem;
 class Projectile;
+class Planet;
 
 class OrbitSimulation : public sf::Drawable
 {
@@ -19,10 +21,17 @@ public:
 	void Update(float dt);
 
 private:
+	void UpdateInput();
+	void UpdateMovements(float dt);
+	void UpdateProjectileAcceleration();
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 	PlanetSystem* m_planetSystem;
-	Projectile* m_projectile;
+	std::vector<Planet*> m_planets;			// Bad design of storing in multiple places, but will work for now
+	std::vector<Projectile*> m_projectiles;
+
+	bool m_paused;
+	double m_years_per_second;
 };
 
 #endif

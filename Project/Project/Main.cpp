@@ -4,6 +4,7 @@
 
 #include "SystemInformation.hpp"
 #include "OrbitSimulation.hpp"
+#include "Input.hpp"
 
 int main()
 {
@@ -11,6 +12,8 @@ int main()
 
 	sf::RenderWindow window(sf::VideoMode(WNDW, WNDH), "PhysicsTest");
 	sf::Clock time;
+
+	Input::Get()->SetWindow(&window);
 
 	OrbitSimulation simulation;
 
@@ -44,6 +47,8 @@ int main()
 		window.draw(simulation);
 		window.display();
 	}
+
+	Input::Delete();
 
 	return 0;
 }
