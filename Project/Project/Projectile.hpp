@@ -31,7 +31,7 @@ public:
 	void SetMass(double mass);
 	void SetRadius(double radius);
 	
-	void SetVisualRadius(float radius);
+	void UpdateVisualRadius();
 	void SetSpin(float spin);
 
 	void AddPosition(const Vector2d& v);
@@ -60,6 +60,7 @@ protected:
 
 	sf::CircleShape m_circle;
 	double m_mass;
+	double m_visual_radius;
 	double m_radius;
 	double m_spin;
 };

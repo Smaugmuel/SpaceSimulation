@@ -22,8 +22,8 @@ Projectile::Projectile(double x, double y, double vx, double vy)
 	m_mass = 100;
 	m_spin = 0.0f;
 	m_radius = 1e+6;
+	m_visual_radius = std::powf(2, std::log10f(m_radius) - 4);
 
-	m_circle.setRadius(std::powf(2, std::log10f(m_radius) - 4));
 	m_circle.setOrigin(m_circle.getRadius(), m_circle.getRadius());
 	m_circle.setFillColor(sf::Color::Red);
 	m_circle.setPosition(x, y);
@@ -86,15 +86,19 @@ void Projectile::SetMass(double mass)
 void Projectile::SetRadius(double radius)
 {
 	m_radius = radius;
-
+	UpdateVisualRadius();
 	// Modify visual radius
-	SetVisualRadius(std::powf(2, std::log10f(m_radius) - 4.5));
+	//UpdateVisualRadius(std::powf(2, std::log10f(m_radius) - 4.5));
 }
 
-void Projectile::SetVisualRadius(float radius)
+void Projectile::UpdateVisualRadius()
 {
-	m_circle.setRadius(radius);
-	m_circle.setOrigin(radius, radius);
+	//m_visual_radius = std::powf(2, std::log10f(m_radius) - 4.5);
+	m_visual_radius = std::powf(2, std::log10f(m_radius) - 5.5);
+
+
+	m_circle.setRadius(m_visual_radius);
+	m_circle.setOrigin(m_visual_radius, m_visual_radius);
 }
 
 void Projectile::SetSpin(float spin)

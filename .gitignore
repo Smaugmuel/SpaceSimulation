@@ -1,1 +1,11 @@
 *.sdf
+*.tlog
+*.exe
+*.ilk
+*.pdb
+*.idb
+/Project/.vs/Project/v14/.suo
+*.db
+*.opendb
+*.obj
+*.log

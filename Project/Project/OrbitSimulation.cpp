@@ -2,6 +2,7 @@
 #include "PlanetSystem.hpp"
 #include "Projectile.hpp"
 #include "OrbitingPlanet.hpp"
+//#include <SFML\Window\Mouse.hpp>
 
 #include "SystemInformation.hpp"
 
@@ -13,8 +14,8 @@
 OrbitSimulation::OrbitSimulation()
 {
 	m_planetSystem = new PlanetSystem;
-	m_projectile = new Projectile(1.5858e12, WNDH * 0.5 / PX_PER_M - 7.0e9, 0.0 / PX_PER_M, 7399.79);
-	m_projectile->SetVisualRadius(10);
+	m_projectile = new Projectile(1.5858e12 * 0.8, WNDH * 0.5 / PX_PER_M - 7.0e9, 0.0 / PX_PER_M, 7399.79);
+	m_projectile->UpdateVisualRadius();
 	m_projectile->SetColor(sf::Color::Magenta);
 }
 
