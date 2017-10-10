@@ -13,6 +13,8 @@
 #include <SFML\Graphics\RenderTarget.hpp>
 #include <SFML\Graphics\RenderStates.hpp>
 
+#include <iostream>
+
 OrbitSimulation::OrbitSimulation()
 {
 	m_planetSystem = new PlanetSystem;
@@ -59,7 +61,7 @@ void OrbitSimulation::Update(float dt)
 
 void OrbitSimulation::UpdateInput()
 {
-	Input::Get()->Update();
+	Input::Get()->UpdateInput();
 
 	if (Input::Get()->IsMousePressed(sf::Mouse::Button::Left))
 	{

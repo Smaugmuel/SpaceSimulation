@@ -1,17 +1,10 @@
-#include <SFML\Graphics\RenderWindow.hpp>
 #include <SFML\Window\Event.hpp>
-#include <SFML\Window\Mouse.hpp>
 #include <crtdbg.h>
 
 #include "SystemInformation.hpp"
 #include "OrbitSimulation.hpp"
 #include "Input.hpp"
 
-
-//for debugging
-#include <iostream>
-
-void ZoomInOnMouse(sf::RenderWindow& window, sf::Event& event, sf::View& view);
 
 int main()
 {
@@ -20,41 +13,22 @@ int main()
 	sf::RenderWindow window(sf::VideoMode(WNDW, WNDH), "PhysicsTest");
 	sf::View view = window.getDefaultView();
 	sf::Clock time;
-
-	Input::Get()->SetWindow(&window);
-
-	OrbitSimulation simulation;
+	sf::Event event;
 
 	window.setView(view);
 
+	Input::Get()->SetWindow(&window);
+	Input::Get()->SetView(&view);
+	Input::Get()->SetEvent(&event);
+
+	OrbitSimulation simulation;
+
+
 	while (window.isOpen())
 	{
-		sf::Event event;
-		while (window.pollEvent(event))
-		{
-			switch (event.type)
-			{
-			case sf::Event::Closed:
-				window.close();
-				break;
-			case sf::Event::MouseWheelMoved:
-				ZoomInOnMouse(window, event, view);
-				break;
-
-			case sf::Event::Resized: // window resizing currently resets the zoom
-				{
-					sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
-					view = sf::View(visibleArea);
-					window.setView(view);
-				}
-				break;
-			default:
-				break;
-			}
-		}
+		Input::Get()->UpdateWindow();
 
 		float elapsedTime = 0.0f;
-
 
 		while (elapsedTime < RENDER_COMPENSATION / FRAME_RATE)
 		{
@@ -72,19 +46,4 @@ int main()
 	Input::Delete();
 
 	return 0;
-}
-
-void ZoomInOnMouse(sf::RenderWindow& window, sf::Event& event, sf::View& view)
-{
-	//std::cout << event.mouseWheel.delta << std::endl;
-
-	sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
-	const sf::Vector2f beforeCoord{ window.mapPixelToCoords(pixelPos) };
-	view.zoom(1.0f - event.mouseWheel.delta * 0.1f);
-	window.setView(view);
-
-	const sf::Vector2f afterCoord{ window.mapPixelToCoords(pixelPos) };
-	const sf::Vector2f offsetCoords{ beforeCoord - afterCoord };
-	view.move(offsetCoords);
-	window.setView(view);
 }
