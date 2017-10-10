@@ -1,12 +1,12 @@
 #include <SFML\Graphics\RenderWindow.hpp>
 #include <SFML\Window\Event.hpp>
+#include <SFML\Window\Mouse.hpp>
 #include <crtdbg.h>
 
 #include "SystemInformation.hpp"
 #include "OrbitSimulation.hpp"
+#include "Input.hpp"
 
-//todo: move this after merge with FiringProjectile branch
-#include <SFML\Window\Mouse.hpp>
 
 //for debugging
 #include <iostream>
@@ -20,6 +20,8 @@ int main()
 	sf::RenderWindow window(sf::VideoMode(WNDW, WNDH), "PhysicsTest");
 	sf::View view = window.getDefaultView();
 	sf::Clock time;
+
+	Input::Get()->SetWindow(&window);
 
 	OrbitSimulation simulation;
 
@@ -66,6 +68,8 @@ int main()
 		window.draw(simulation);
 		window.display();
 	}
+
+	Input::Delete();
 
 	return 0;
 }

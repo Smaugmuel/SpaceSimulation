@@ -6,7 +6,7 @@
 #define FRAME_RATE 100
 #define RENDER_COMPENSATION 3.0f / 4.0f
 #define PX_PER_M 8.72e-10
-#define YEARS_PER_S 0.1
+//#define YEARS_PER_S 0.1
 
 
 #endif

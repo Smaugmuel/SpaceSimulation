@@ -22,11 +22,11 @@ Projectile::Projectile(double x, double y, double vx, double vy)
 	m_mass = 100;
 	m_spin = 0.0f;
 	m_radius = 1e+6;
-	m_visual_radius = std::powf(2, std::log10f(m_radius) - 4);
 
-	m_circle.setOrigin(m_circle.getRadius(), m_circle.getRadius());
+	SetRadius(1e+6);
+
 	m_circle.setFillColor(sf::Color::Red);
-	m_circle.setPosition(x, y);
+	m_circle.setPosition(x * PX_PER_M, y * PX_PER_M);
 	m_circle.setPointCount(100);
 }
 
