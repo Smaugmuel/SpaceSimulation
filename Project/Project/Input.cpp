@@ -42,6 +42,8 @@ void Input::UpdateInput()
 	m_mouseWindowCoord = sf::Mouse::getPosition(*m_window);
 	m_mousePos = m_window->mapPixelToCoords(m_mouseWindowCoord);
 
+	m_mousePosDouble = Vector2d(m_mousePos.x, WNDH - m_mousePos.y);
+
 	m_mouseDownPrev[0] = m_mouseDown[0];
 	m_mouseDownPrev[1] = m_mouseDown[1];
 	m_mouseDownPrev[2] = m_mouseDown[2];
@@ -149,7 +151,7 @@ const sf::Vector2f& Input::MousePosition() const
 
 const Vector2d& Input::MousePositionDouble() const
 {
-	return Vector2d(static_cast<const double>(m_mousePos.x), static_cast<const double>(WNDH - m_mousePos.y));
+	return m_mousePosDouble;
 }
 
 const sf::Vector2f Input::MouseMovement() const

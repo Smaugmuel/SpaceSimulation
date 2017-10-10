@@ -51,6 +51,8 @@ private:
 	sf::Vector2f m_mousePos;
 	sf::Vector2f m_mousePosPrev;
 
+	Vector2d m_mousePosDouble;
+
 	sf::Vector2i m_mouseWindowCoord; //needed?
 
 
