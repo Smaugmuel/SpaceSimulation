@@ -25,7 +25,7 @@ private:
 	void UpdateMovements(float dt);
 	void UpdateProjectileAcceleration();
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-
+	void detectCrash();
 	PlanetSystem* m_planetSystem;
 	std::vector<Planet*> m_planets;			// Bad design of storing in multiple places, but will work for now
 	std::vector<Projectile*> m_projectiles;

@@ -48,7 +48,7 @@ OrbitSimulation::~OrbitSimulation()
 void OrbitSimulation::Update(float dt)
 {
 	UpdateInput();
-
+	detectCrash();
 	if (!m_paused)
 	{
 		double secondsInOneEarthYear = 3.15576e7;
@@ -126,4 +126,34 @@ void OrbitSimulation::draw(sf::RenderTarget & target, sf::RenderStates states) c
 	{
 		target.draw(*m_projectiles[i], states);
 	}
+}
+
+void OrbitSimulation::detectCrash() 
+{
+	
+	for (unsigned int i = 0; i < m_projectiles.size(); i++) 
+	{
+		bool crashDetected = false;
+		for (unsigned int j=0; j < m_planets.size() && !crashDetected ; j++) 
+		{
+			Vector2d direction = m_planets[j]->GetPosition() - m_projectiles[i]->GetPosition();
+			double distance = direction.Length();
+
+			if (distance < (m_planets[j]->GetRadius()))
+			{
+				crashDetected = true;
+				
+				delete m_projectiles[i];
+				m_projectiles.erase(m_projectiles.begin() + i);
+			
+				i--;
+			}
+		}
+		if (crashDetected)
+		{
+			m_paused = true;
+		}
+	}
+
+		
 }
