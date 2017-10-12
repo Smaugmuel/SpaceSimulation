@@ -28,6 +28,8 @@ Projectile::Projectile(double x, double y, double vx, double vy)
 	m_circle.setFillColor(sf::Color::Red);
 	m_circle.setPosition(x * PX_PER_M, y * PX_PER_M);
 	m_circle.setPointCount(100);
+
+	m_isCrashed = false;
 }
 
 Projectile::~Projectile()
@@ -89,6 +91,11 @@ void Projectile::SetRadius(double radius)
 	UpdateVisualRadius();
 	// Modify visual radius
 	//UpdateVisualRadius(std::powf(2, std::log10f(m_radius) - 4.5));
+}
+
+void Projectile::SetIsCrashed(bool isCrashed)
+{
+	m_isCrashed = isCrashed;
 }
 
 void Projectile::UpdateVisualRadius()
@@ -172,6 +179,11 @@ double Projectile::GetMass() const
 float Projectile::GetSpin() const
 {
 	return m_spin;
+}
+
+bool Projectile::GetIsCrashed()const
+{
+	return m_isCrashed;
 }
 
 void Projectile::draw(sf::RenderTarget & target, sf::RenderStates states) const

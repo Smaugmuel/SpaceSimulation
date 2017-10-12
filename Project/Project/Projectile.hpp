@@ -30,6 +30,8 @@ public:
 	void SetColor(const sf::Color& color);
 	void SetMass(double mass);
 	void SetRadius(double radius);
+
+	void SetIsCrashed(bool isCrashed);
 	
 	void UpdateVisualRadius();
 	void SetSpin(float spin);
@@ -50,6 +52,8 @@ public:
 	double GetArea() const;
 	float GetSpin() const;
 
+	bool GetIsCrashed() const;
+
 private:
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
@@ -63,6 +67,8 @@ protected:
 	double m_visual_radius;
 	double m_radius;
 	double m_spin;
+
+	bool m_isCrashed;
 };
 
 #endif

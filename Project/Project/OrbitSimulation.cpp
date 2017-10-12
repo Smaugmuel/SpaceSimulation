@@ -133,27 +133,38 @@ void OrbitSimulation::detectCrash()
 	
 	for (unsigned int i = 0; i < m_projectiles.size(); i++) 
 	{
-		bool crashDetected = false;
-		for (unsigned int j=0; j < m_planets.size() && !crashDetected ; j++) 
+		for (unsigned int j=0; j < m_planets.size(); j++) 
 		{
 			Vector2d direction = m_planets[j]->GetPosition() - m_projectiles[i]->GetPosition();
 			double distance = direction.Length();
 
 			if (distance < (m_planets[j]->GetRadius()))
 			{
-				crashDetected = true;
-				
+			
+				m_projectiles[i]->SetIsCrashed(true);
+
+				//delete m_projectiles[i];
+				//m_projectiles.erase(m_projectiles.begin() + i);
+			
+				//i--;
+			} 
+		}
+	}
+	for (unsigned int i = 0; i < m_projectiles.size(); i++)
+	{
+		if (m_projectiles[i]->GetIsCrashed())
+		{
+			m_projectiles[i]->SetAcceleration(0, 0);
+			m_projectiles[i]->SetVelocity(0, 0);
+
+			m_projectiles[i]->SetColor(sf::Color::Red);
+			m_projectiles[i]->SetRadius(m_projectiles[i]->GetRadius() + 2.0e4);
+			if (m_projectiles[i]->GetRadius() > 5.0e7)
+			{
 				delete m_projectiles[i];
 				m_projectiles.erase(m_projectiles.begin() + i);
-			
 				i--;
 			}
 		}
-		if (crashDetected)
-		{
-			m_paused = true;
-		}
 	}
-
-		
 }
