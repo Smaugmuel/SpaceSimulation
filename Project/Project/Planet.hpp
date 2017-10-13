@@ -26,9 +26,10 @@ public:
 
 protected:
 	std::vector<OrbitingPlanet*> m_orbiting;
+	std::string name;
 
 private:
-	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 };
 
 #endif
