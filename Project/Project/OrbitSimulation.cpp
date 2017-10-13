@@ -1,8 +1,13 @@
 #include "OrbitSimulation.hpp"
+
 #include "PlanetSystem.hpp"
-#include "Projectile.hpp"
 #include "OrbitingPlanet.hpp"
+
+#include "Projectile.hpp"
 #include "ProjectileFactory.hpp"
+
+#include "Rocket.hpp"
+#include "RocketFactory.hpp"
 
 #include "SystemInformation.hpp"
 
@@ -43,6 +48,14 @@ OrbitSimulation::~OrbitSimulation()
 			m_projectiles[i] = nullptr;
 		}
 	}
+	for (unsigned int i = 0; i < m_rockets.size(); i++)
+	{
+		if (m_rockets[i])
+		{
+			delete m_rockets[i];
+			m_rockets[i] = nullptr;
+		}
+	}
 }
 
 void OrbitSimulation::Update(float dt)
@@ -65,11 +78,13 @@ void OrbitSimulation::UpdateInput()
 
 	if (Input::Get()->IsMousePressed(sf::Mouse::Button::Left))
 	{
-		m_projectiles.push_back(ProjectileFactory::CreateProjectile(m_planets[3]));
+		m_rockets.push_back(RocketFactory::CreateRocket(m_planets[3]));
+		//m_projectiles.push_back(ProjectileFactory::CreateProjectile(m_planets[3]));
 	}
 	if (Input::Get()->IsMousePressed(sf::Mouse::Button::Right))
 	{
-		m_projectiles.push_back(ProjectileFactory::CreateProjectile(m_planets[5]));
+		m_rockets.push_back(RocketFactory::CreateRocket(m_planets[5]));
+		//m_projectiles.push_back(ProjectileFactory::CreateProjectile(m_planets[5]));
 	}
 
 	if (Input::Get()->IsKeyPressed(sf::Keyboard::Key::Space))
@@ -94,6 +109,11 @@ void OrbitSimulation::UpdateMovements(float dt)
 	{
 		m_projectiles[i]->Update(dt);
 	}
+
+	for (unsigned int i = 0; i < m_rockets.size(); i++)
+	{
+		m_rockets[i]->Update(dt);
+	}
 }
 
 void OrbitSimulation::UpdateProjectileAcceleration()
@@ -116,6 +136,22 @@ void OrbitSimulation::UpdateProjectileAcceleration()
 			m_projectiles[i]->AddAcceleration(direction * acceleration);
 		}
 	}
+
+	for (unsigned int i = 0; i < m_rockets.size(); i++)
+	{
+		m_rockets[i]->SetAcceleration(0.0, 0.0);
+
+		for (unsigned int j = 0; j < m_planets.size(); j++)
+		{
+			Vector2d direction = m_planets[j]->GetPosition() - m_rockets[i]->GetPosition();
+			double distance = direction.Length();
+			direction.Normalize();
+
+			double acceleration = 6.67408e-11 * m_planets[j]->GetMass() / std::pow(distance, 2);
+
+			m_rockets[i]->AddAcceleration(direction * acceleration);
+		}
+	}
 }
 
 void OrbitSimulation::draw(sf::RenderTarget & target, sf::RenderStates states) const
@@ -125,6 +161,11 @@ void OrbitSimulation::draw(sf::RenderTarget & target, sf::RenderStates states) c
 	for (unsigned int i = 0; i < m_projectiles.size(); i++)
 	{
 		target.draw(*m_projectiles[i], states);
+	}
+
+	for (unsigned int i = 0; i < m_rockets.size(); i++)
+	{
+		target.draw(*m_rockets[i], states);
 	}
 }
 

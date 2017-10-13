@@ -1,15 +1,54 @@
 #include "Rocket.hpp"
+#include <SFML\Graphics\RenderTarget.hpp>
+#include <SFML\Graphics\RenderStates.hpp>
+#include "SystemInformation.hpp"
 
 Rocket::Rocket()
+	: Rocket::Rocket(0.0, 0.0, 0.0, 0.0)
 {
+}
+
+Rocket::Rocket(Vector2d position, Vector2d velocity)
+	: Rocket::Rocket(position.x, position.y, velocity.x, velocity.y)
+{
+}
+
+Rocket::Rocket(double x, double y, double vx, double vy)
+{
+	m_position = Vector2d(x, y);
+	m_velocity = Vector2d(vx, vy);
+	m_acceleration = Vector2d(0.0, 0.0);
+
+	m_payloadMass = 10000.0;		// 10 tonne
+	m_steps.push_back(new Step);
+
+	m_triangle.setPointCount(3);
+	m_triangle.setRadius(7.0f);
+	m_triangle.setOrigin(10.0f, 10.0f);
+	m_triangle.setPosition(x * PX_PER_M, y * PX_PER_M);
+	m_triangle.setScale(1.0f, 2.0f);
+	m_triangle.setFillColor(sf::Color::Magenta);
 }
 
 Rocket::~Rocket()
 {
+	for (unsigned int i = 0; i < m_steps.size(); i++)
+	{
+		delete m_steps[i];
+		m_steps[i] = nullptr;
+	}
 }
 
 void Rocket::Update(float dt)
 {
+	m_position += m_velocity * dt;
+	m_velocity += m_acceleration * dt;
+
+	Vector2d e_v = m_velocity.Normalized();
+	int positive = (float)e_v.y / std::fabsf((float)e_v.y);
+	float rotation = positive * std::acosf(e_v.x) * 180 / 3.1415927f;
+
+	m_triangle.setRotation(90 - rotation);
 }
 
 void Rocket::SetPosition(const Vector2d & position)
@@ -128,6 +167,18 @@ const bool & Rocket::GetIsThrusting() const
 {
 	return m_isThrusting;
 }
+
+void Rocket::draw(sf::RenderTarget & target, sf::RenderStates states) const
+{
+	sf::CircleShape triangle = m_triangle;
+
+	Vector2f screenPos = m_position * PX_PER_M;
+	triangle.setPosition(screenPos.x, WNDH - screenPos.y);
+
+	target.draw(triangle, states);
+}
+
+
 
 Step::Step()
 {
