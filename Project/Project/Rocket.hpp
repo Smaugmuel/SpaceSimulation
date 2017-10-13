@@ -1,6 +1,6 @@
 #ifndef ROCKET_HPP
 #define ROCKET_HPP
-#include <vector>
+#include <list>
 #include "Vector2.hpp"
 #include <SFML\Graphics\Drawable.hpp>
 #include <SFML\Graphics\CircleShape.hpp>
@@ -22,19 +22,23 @@ public:
 	void SetHullMass(double mass);
 	void SetFuelMass(double mass);
 	void SetEscapeVelocity(double ve);
-	void SetMassLoss(double m);
+	void SetFuelMassLossPerSecond(double m);
+
+	void AddFuelMass(double mass);
 
 	const double& GetHullMass() const;
 	const double& GetFuelMass() const;
 	const double& GetTotalMass() const;
 	const double& GetEscapeVelocity() const;
-	const double& GetMassLoss() const;
+	const double& GetFuelMassLossPerSecond() const;
+
+	double GetThrust() const;
 
 private:
-	double m_escapeVelocity;
+	double m_exhaustVelocity;
 	double m_hullMass;
 	double m_fuelMass;
-	double m_fuelMassLoss;
+	double m_fuelMassLossPerSecond;
 };
 
 class Rocket : public sf::Drawable
@@ -46,6 +50,7 @@ public:
 	~Rocket();
 
 	void Update(float dt);
+	void UpdateThrust(float dt);
 
 	void SetPosition(const Vector2d& position);
 	void SetPosition(double x, double y);
@@ -56,8 +61,7 @@ public:
 
 	void SetPayloadMass(double mass);
 	
-	void StartThrust();
-	void EndThrust();
+	void ToggleThrust();
 
 	void AddPosition(const Vector2d& v);
 	void AddPosition(double x, double y);
@@ -86,7 +90,7 @@ private:
 
 	double m_payloadMass;
 
-	std::vector<Step*> m_steps;
+	std::list<Step*> m_steps;
 
 	bool m_isThrusting;
 };

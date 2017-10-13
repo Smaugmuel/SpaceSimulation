@@ -19,8 +19,10 @@ Rocket::Rocket(double x, double y, double vx, double vy)
 	m_velocity = Vector2d(vx, vy);
 	m_acceleration = Vector2d(0.0, 0.0);
 
-	m_payloadMass = 10000.0;		// 10 tonne
+	m_payloadMass = 1e5;		// 100 tonne
 	m_steps.push_back(new Step);
+
+	m_isThrusting = false;
 
 	m_triangle.setPointCount(3);
 	m_triangle.setRadius(7.0f);
@@ -32,10 +34,10 @@ Rocket::Rocket(double x, double y, double vx, double vy)
 
 Rocket::~Rocket()
 {
-	for (unsigned int i = 0; i < m_steps.size(); i++)
+	while (m_steps.size())
 	{
-		delete m_steps[i];
-		m_steps[i] = nullptr;
+		delete m_steps.front();
+		m_steps.pop_front();
 	}
 }
 
@@ -44,11 +46,40 @@ void Rocket::Update(float dt)
 	m_position += m_velocity * dt;
 	m_velocity += m_acceleration * dt;
 
+	UpdateThrust(dt);
+
 	Vector2d e_v = m_velocity.Normalized();
 	int positive = (float)e_v.y / std::fabsf((float)e_v.y);
 	float rotation = positive * std::acosf(e_v.x) * 180 / 3.1415927f;
-
 	m_triangle.setRotation(90 - rotation);
+}
+
+void Rocket::UpdateThrust(float dt)
+{
+	if (m_steps.empty())
+	{
+		m_isThrusting = false;
+	}
+
+	if (m_isThrusting)
+	{
+		Step* step = m_steps.front();
+
+		double fuelMassLoss = step->GetFuelMassLossPerSecond() * dt;
+		double actualFuelMassLoss = std::min(step->GetFuelMass(), fuelMassLoss);
+
+		double acc = actualFuelMassLoss * step->GetEscapeVelocity() / GetTotalMass();
+
+		m_steps.front()->AddFuelMass(-actualFuelMassLoss);
+
+		m_acceleration += m_velocity.Normalized() * acc;
+
+		if (actualFuelMassLoss >= step->GetFuelMass())
+		{
+			step->SetFuelMass(0.0);
+			m_isThrusting = false;
+		}
+	}
 }
 
 void Rocket::SetPosition(const Vector2d & position)
@@ -89,14 +120,9 @@ void Rocket::SetPayloadMass(double mass)
 	m_payloadMass = mass;
 }
 
-void Rocket::StartThrust()
+void Rocket::ToggleThrust()
 {
-	m_isThrusting = true;
-}
-
-void Rocket::EndThrust()
-{
-	m_isThrusting = false;
+	m_isThrusting = !m_isThrusting;
 }
 
 void Rocket::AddPosition(const Vector2d & v)
@@ -182,6 +208,10 @@ void Rocket::draw(sf::RenderTarget & target, sf::RenderStates states) const
 
 Step::Step()
 {
+	m_hullMass = 1e10;
+	m_fuelMass = 2.2e13;
+	m_fuelMassLossPerSecond = 1e6;
+	m_exhaustVelocity = 2.5e3;
 }
 
 Step::~Step()
@@ -204,12 +234,17 @@ void Step::SetFuelMass(double mass)
 
 void Step::SetEscapeVelocity(double ve)
 {
-	m_escapeVelocity = ve;
+	m_exhaustVelocity = ve;
 }
 
-void Step::SetMassLoss(double m)
+void Step::SetFuelMassLossPerSecond(double m)
 {
-	m_fuelMassLoss = m;
+	m_fuelMassLossPerSecond = m;
+}
+
+void Step::AddFuelMass(double mass)
+{
+	m_fuelMass += mass;
 }
 
 const double& Step::GetHullMass() const
@@ -229,10 +264,10 @@ const double& Step::GetTotalMass() const
 
 const double& Step::GetEscapeVelocity() const
 {
-	return m_escapeVelocity;
+	return m_exhaustVelocity;
 }
 
-const double& Step::GetMassLoss() const
+const double& Step::GetFuelMassLossPerSecond() const
 {
-	return m_fuelMassLoss;
+	return m_fuelMassLossPerSecond;
 }

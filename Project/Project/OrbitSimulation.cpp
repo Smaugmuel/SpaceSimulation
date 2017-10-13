@@ -99,6 +99,14 @@ void OrbitSimulation::UpdateInput()
 	{
 		m_years_per_second -= 0.01;
 	}
+
+	if (Input::Get()->IsKeyPressed(sf::Keyboard::Key::Num1))
+	{
+		for (unsigned int i = 0; i < m_rockets.size(); i++)
+		{
+			m_rockets[i]->ToggleThrust();
+		}
+	}
 }
 
 void OrbitSimulation::UpdateMovements(float dt)
