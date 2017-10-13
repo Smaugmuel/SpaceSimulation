@@ -53,9 +53,11 @@ void OrbitingPlanet::draw(sf::RenderTarget & target, sf::RenderStates states) co
 	sf::CircleShape orbit = m_orbit;
 	orbit.setRadius(GetOrbitRadius()*PX_PER_M);
 	orbit.setOrigin(GetOrbitRadius()*PX_PER_M,GetOrbitRadius()*PX_PER_M);
-	orbit.setOutlineThickness(50.0f);
+	orbit.setOutlineThickness(1.0f);
+	orbit.setFillColor(sf::Color::Transparent);
 	orbit.setOutlineColor(sf::Color::White);
-	orbit.setPosition(WNDW * 0.5 / PX_PER_M, WNDH * 0.5 / PX_PER_M);
+	orbit.setPosition(WNDW * 0.5, WNDH * 0.5);
+
 
 	target.draw(orbit, states);
 
