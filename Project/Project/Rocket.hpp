@@ -68,6 +68,7 @@ private:
 	Vector2d m_position;
 	Vector2d m_velocity;
 	Vector2d m_acceleration;
+	double m_rotation;
 
 	double m_payloadMass;
 
