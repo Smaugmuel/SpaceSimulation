@@ -78,11 +78,11 @@ void OrbitSimulation::UpdateInput()
 	}
 	if (Input::Get()->IsKeyPressed(sf::Keyboard::Key::Up))
 	{
-		m_years_per_second += 0.1;
+		m_years_per_second += 0.01;
 	}
 	if (Input::Get()->IsKeyPressed(sf::Keyboard::Key::Down))
 	{
-		m_years_per_second -= 0.1;
+		m_years_per_second -= 0.01;
 	}
 }
 
