@@ -48,7 +48,7 @@ OrbitingPlanet * Planet::GetOrbitingPlanet(unsigned int i)
 	return i < m_orbiting.size() ? m_orbiting[i] : nullptr;
 }
 
-void Planet::draw(sf::RenderTarget & target, sf::RenderStates states) const
+void Planet::draw(sf::RenderTarget & target, sf::RenderStates states) const 
 {
 	sf::CircleShape circle = m_circle;
 
