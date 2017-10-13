@@ -5,6 +5,8 @@
 #include "OrbitSimulation.hpp"
 #include "Input.hpp"
 
+#include "FPS_Counter.hpp"
+
 
 int main()
 {
@@ -14,6 +16,8 @@ int main()
 	sf::View view = window.getDefaultView();
 	sf::Clock time;
 	sf::Event event;
+
+	FPS_Counter fps(WNDW);
 
 	window.setView(view);
 
@@ -38,8 +42,11 @@ int main()
 			simulation.Update(deltaTime);
 		}
 
+		fps.Update();
+
 		window.clear(sf::Color::Black);
 		window.draw(simulation);
+		window.draw(fps);
 		window.display();
 	}
 
