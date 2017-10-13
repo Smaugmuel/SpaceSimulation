@@ -2,10 +2,16 @@
 #include "OrbitingPlanet.hpp"
 #include <SFML\Graphics\RenderTarget.hpp>
 #include <SFML\Graphics\RenderStates.hpp>
+#include <SFML\Graphics\Text.hpp>
 #include "SystemInformation.hpp"
+#include "Input.hpp"
+
 
 Planet::Planet()
 {
+	//sf::Font font;
+	//font.loadFromFile("Font/FreeSans.ttf");
+	//m_planet_name->setFont(font);
 }
 
 Planet::~Planet()
@@ -22,6 +28,9 @@ Planet::~Planet()
 
 void Planet::Update(float dt)
 {
+	Vector2f temp = GetPosition();
+	//m_planet_name->setOrigin(temp.SFML_VEC());
+
 	for (unsigned int i = 0; i < m_orbiting.size(); i++)
 	{
 		m_orbiting[i]->Update(dt);
@@ -48,6 +57,17 @@ OrbitingPlanet * Planet::GetOrbitingPlanet(unsigned int i)
 	return i < m_orbiting.size() ? m_orbiting[i] : nullptr;
 }
 
+void Planet::SetName(const std::string &name)
+{
+	//m_planet_name->setString(name);
+	//m_planet_name->setColor(sf::Color::White);
+}
+
+void Planet::SetTextSize(unsigned int size)
+{
+	m_planet_name->setCharacterSize(size);
+}
+
 void Planet::draw(sf::RenderTarget & target, sf::RenderStates states) const
 {
 	sf::CircleShape circle = m_circle;
@@ -57,6 +77,7 @@ void Planet::draw(sf::RenderTarget & target, sf::RenderStates states) const
 	circle.setPosition(screenPos.x, WNDH - screenPos.y);
 
 	target.draw(circle, states);
+	//target.draw(*m_planet_name, states);
 
 	for (unsigned int i = 0; i < m_orbiting.size(); i++)
 	{

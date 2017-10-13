@@ -23,13 +23,13 @@ public:
 	};
 
 	void UpdateInput();
-	void UpdateWindow();
+	//void UpdateWindow();
 
-	void ZoomInOnMouse();
+	//void ZoomInOnMouse();
 
-	void SetWindow(sf::RenderWindow* window);
-	void SetView(sf::View* view);
-	void SetEvent(sf::Event* event);
+	/*void SetWindow(sf::RenderWindow* window);
+	void SetView(sf::View* view);*/
+	//void SetEvent(sf::Event* event);
 
 	bool IsKeyDown(unsigned int key) const;
 	bool IsKeyPressed(unsigned int key) const;
@@ -53,15 +53,15 @@ private:
 
 	Vector2d m_mousePosDouble;
 
-	sf::Vector2i m_mouseWindowCoord; //needed?
+	//sf::Vector2i m_mouseWindowCoord; //needed?
 
 
 	bool m_mouseDown[3];
 	bool m_mouseDownPrev[3];
 
-	sf::RenderWindow* m_window;
-	sf::View* m_view;
-	sf::Event* m_event;
+	/*sf::RenderWindow* m_window;
+	sf::View* m_view;*/
+	//sf::Event* m_event;
 };
 
 #endif
