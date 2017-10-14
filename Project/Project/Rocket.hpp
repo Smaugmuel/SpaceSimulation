@@ -1,7 +1,15 @@
 #ifndef ROCKET_HPP
 #define ROCKET_HPP
-#include <list>
+#include <vector>
 #include "Vector2.hpp"
+#include <SFML\Graphics\Drawable.hpp>
+#include <SFML\Graphics\CircleShape.hpp>
+
+namespace sf
+{
+	class RenderTarget;
+	class RenderStates;
+}
 
 class Step
 {
@@ -29,9 +37,11 @@ private:
 	double m_fuelMassLoss;
 };
 
-class Rocket
+class Rocket : public sf::Drawable
 {
 public:
+	Rocket(Vector2d position, Vector2d velocity);
+	Rocket(double x, double y, double vx, double vy);
 	Rocket();
 	~Rocket();
 
@@ -65,13 +75,17 @@ public:
 	const bool& GetIsThrusting() const;
 
 private:
+	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+
+	sf::CircleShape m_triangle;
+
 	Vector2d m_position;
 	Vector2d m_velocity;
 	Vector2d m_acceleration;
 
 	double m_payloadMass;
 
-	std::list<Step*> m_steps;
+	std::vector<Step*> m_steps;
 
 	bool m_isThrusting;
 };

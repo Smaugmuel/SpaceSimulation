@@ -169,6 +169,7 @@
     <ClCompile Include="ProjectileFactory.cpp" />
     <ClCompile Include="Rocket.cpp" />
     <ClCompile Include="ViewHandler.cpp" />
+    <ClCompile Include="RocketFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FPS_Counter.hpp" />
@@ -180,6 +181,7 @@
     <ClInclude Include="Projectile.hpp" />
     <ClInclude Include="ProjectileFactory.hpp" />
     <ClInclude Include="Rocket.hpp" />
+    <ClInclude Include="RocketFactory.hpp" />
     <ClInclude Include="Singleton.hpp" />
     <ClInclude Include="SystemInformation.hpp" />
     <ClInclude Include="Vector2.hpp" />

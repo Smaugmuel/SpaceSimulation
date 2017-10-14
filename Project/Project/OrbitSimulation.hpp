@@ -11,6 +11,7 @@ namespace sf
 class PlanetSystem;
 class Projectile;
 class Planet;
+class Rocket;
 
 class OrbitSimulation : public sf::Drawable
 {
@@ -29,6 +30,7 @@ private:
 	PlanetSystem* m_planetSystem;
 	std::vector<Planet*> m_planets;			// Bad design of storing in multiple places, but will work for now
 	std::vector<Projectile*> m_projectiles;
+	std::vector<Rocket*> m_rockets;
 
 	bool m_paused;
 	double m_years_per_second;
