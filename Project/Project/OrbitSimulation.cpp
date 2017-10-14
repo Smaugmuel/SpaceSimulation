@@ -26,6 +26,7 @@ OrbitSimulation::OrbitSimulation()
 	m_planetSystem->GetPlanets(m_planets);		// Bad design, see header file
 
 	m_paused = false;
+
 	m_years_per_second = 0.0001;
 }
 
@@ -89,11 +90,11 @@ void OrbitSimulation::UpdateInput()
 	}
 	if (Input::Get()->IsKeyPressed(sf::Keyboard::Key::Up))
 	{
-		m_years_per_second += 0.01;
+		m_years_per_second += 0.001;
 	}
 	if (Input::Get()->IsKeyPressed(sf::Keyboard::Key::Down))
 	{
-		m_years_per_second -= 0.01;
+		m_years_per_second -= 0.001;
 	}
 
 	if (Input::Get()->IsKeyPressed(sf::Keyboard::Key::Num1))

@@ -13,6 +13,7 @@ PlanetSystem::PlanetSystem()
 	m_center->SetColor(sf::Color(255, 255, 0));
 	m_center->SetRadius(6.957e8);
 	m_center->SetMass(1.989e30);
+	m_center->SetName("Sun");
 
 	OrbitingPlanet* planet;
 
@@ -23,7 +24,8 @@ PlanetSystem::PlanetSystem()
 	planet->SetMass(3.285e23);
 	planet->SetOrbitRadius(5.7e10);
 	planet->SetOrbitTime(7.6032e6);
-	
+	planet->SetName("Mercury");
+
 	// Venus
 	planet = m_center->CreateOrbitingPlanet();
 	planet->SetColor(sf::Color(255, 150, 71));
@@ -31,7 +33,8 @@ PlanetSystem::PlanetSystem()
 	planet->SetMass(4.86732e24);
 	planet->SetOrbitRadius(1.082e11);
 	planet->SetOrbitTime(1.941408e7);
-	
+	planet->SetName("Venus");
+
 	// Earth
 	planet = m_center->CreateOrbitingPlanet();
 	planet->SetColor(sf::Color(30, 144, 255));
@@ -39,7 +42,8 @@ PlanetSystem::PlanetSystem()
 	planet->SetMass(5.972e24);
 	planet->SetOrbitRadius(1.496e11);
 	planet->SetOrbitTime(3.15576e7);
-	
+	planet->SetName("Earth");
+
 	// Mars
 	planet = m_center->CreateOrbitingPlanet();
 	planet->SetColor(sf::Color(255, 69, 0));
@@ -47,6 +51,7 @@ PlanetSystem::PlanetSystem()
 	planet->SetMass(6.41693e23);
 	planet->SetOrbitRadius(2.279e11);
 	planet->SetOrbitTime(5.93568e7);
+	planet->SetName("Mars");
 
 	// Jupiter
 	planet = m_center->CreateOrbitingPlanet();
@@ -55,6 +60,7 @@ PlanetSystem::PlanetSystem()
 	planet->SetMass(1.898e27);
 	planet->SetOrbitRadius(7.785e11);
 	planet->SetOrbitTime(3.742848e8);
+	planet->SetName("Jupiter");
 }
 
 PlanetSystem::~PlanetSystem()

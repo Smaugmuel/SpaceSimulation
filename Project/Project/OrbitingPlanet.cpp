@@ -1,6 +1,7 @@
 #include "OrbitingPlanet.hpp"
 #include "Projectile.hpp"
 #include "SystemInformation.hpp"
+#include "ViewHandler.hpp"
 #include <SFML\Graphics\RenderTarget.hpp>
 #include <SFML\Graphics\RenderStates.hpp>
 
@@ -50,12 +51,15 @@ double OrbitingPlanet::GetOrbitRadius()const
 
 void OrbitingPlanet::draw(sf::RenderTarget & target, sf::RenderStates states) const
 {
+	// Most of this should probably be moved elsewhere since it's constant
 	sf::CircleShape orbit = m_orbit;
+	orbit.setPointCount(200);
 	orbit.setRadius(GetOrbitRadius()*PX_PER_M);
 	orbit.setOrigin(GetOrbitRadius()*PX_PER_M,GetOrbitRadius()*PX_PER_M);
-	orbit.setOutlineThickness(1.0f);
+	//orbit.setOutlineThickness(1.0f);
+	orbit.setOutlineThickness(ViewHandler::Get()->GetViewSize().y * 0.001f);
 	orbit.setFillColor(sf::Color::Transparent);
-	orbit.setOutlineColor(sf::Color::White);
+	orbit.setOutlineColor(sf::Color(255, 255, 255, 50));
 	orbit.setPosition(WNDW * 0.5, WNDH * 0.5);
 
 
@@ -68,6 +72,16 @@ void OrbitingPlanet::draw(sf::RenderTarget & target, sf::RenderStates states) co
 	circle.setPosition(screenPos.x, WNDH - screenPos.y);
 
 	target.draw(circle, states);
+
+	m_planet_name->setScale(ViewHandler::Get()->GetViewSize() * 0.0004f);
+	m_planet_name->setOrigin(
+		m_planet_name->getLocalBounds().width / 2.0f,
+		m_planet_name->getLocalBounds().height);
+	m_planet_name->setPosition(screenPos.x, WNDH - screenPos.y - m_visual_radius - 20.0f * m_planet_name->getScale().y);
+
+
+	target.draw(*m_planet_name, states);
+
 
 	for (unsigned int i = 0; i < m_orbiting.size(); i++)
 	{
