@@ -14,7 +14,9 @@ int main()
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-	sf::RenderWindow window(sf::VideoMode(WNDW, WNDH), "PhysicsTest");
+	sf::ContextSettings settings;
+	settings.antialiasingLevel = 8;
+	sf::RenderWindow window(sf::VideoMode(WNDW, WNDH), "PhysicsTest", sf::Style::Default, settings);
 	sf::View view = window.getDefaultView();
 	sf::Clock time;
 	sf::Event event;

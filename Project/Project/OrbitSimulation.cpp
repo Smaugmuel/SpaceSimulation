@@ -25,7 +25,7 @@ OrbitSimulation::OrbitSimulation()
 	//m_projectile->SetColor(sf::Color::Magenta);
 
 	m_paused = false;
-	m_years_per_second = 0.1;
+	m_years_per_second = 0.05;
 }
 
 OrbitSimulation::~OrbitSimulation()
@@ -78,11 +78,11 @@ void OrbitSimulation::UpdateInput()
 	}
 	if (Input::Get()->IsKeyPressed(sf::Keyboard::Key::Up))
 	{
-		m_years_per_second += 0.01;
+		m_years_per_second += 0.001;
 	}
 	if (Input::Get()->IsKeyPressed(sf::Keyboard::Key::Down))
 	{
-		m_years_per_second -= 0.01;
+		m_years_per_second -= 0.001;
 	}
 }
 
