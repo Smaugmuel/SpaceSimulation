@@ -61,10 +61,16 @@ void ViewHandler::ZoomInOnMouse()
 	m_window->setView(*m_view);
 }
 
-const sf::Vector2f ViewHandler::getMouseWindowPixelPosition() const
+const sf::Vector2f& ViewHandler::GetMouseWindowPixelPosition() const
 {
 	return m_window->mapPixelToCoords(sf::Mouse::getPosition(*m_window));
 }
+
+const sf::Vector2f& ViewHandler::GetViewSize() const
+{
+	return m_view->getSize();
+}
+
 
 void ViewHandler::SetWindow(sf::RenderWindow * window)
 {

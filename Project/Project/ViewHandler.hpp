@@ -9,7 +9,6 @@ namespace sf
 	class RenderWindow;
 	class View;
 	class Event;
-	//class Vector2i;
 }
 
 class ViewHandler final : public Singleton<ViewHandler>
@@ -28,7 +27,8 @@ public:
 	void SetView(sf::View* view);
 	void SetEvent(sf::Event* event);
 
-	const sf::Vector2f getMouseWindowPixelPosition() const;
+	const sf::Vector2f& GetMouseWindowPixelPosition() const;
+	const sf::Vector2f& GetViewSize() const;
 private:
 
 	sf::RenderWindow* m_window;

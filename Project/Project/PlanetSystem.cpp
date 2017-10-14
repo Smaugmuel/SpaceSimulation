@@ -13,7 +13,7 @@ PlanetSystem::PlanetSystem()
 	m_center->SetColor(sf::Color(255, 255, 0));
 	m_center->SetRadius(6.957e8);
 	m_center->SetMass(1.989e30);
-	m_center->SetName("Sol");
+	m_center->SetName("Sun");
 
 	OrbitingPlanet* planet;
 

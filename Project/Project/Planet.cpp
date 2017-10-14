@@ -3,15 +3,18 @@
 #include <SFML\Graphics\RenderTarget.hpp>
 #include <SFML\Graphics\RenderStates.hpp>
 #include <SFML\Graphics\Text.hpp>
+#include <SFML\Graphics\Font.hpp>
 #include "SystemInformation.hpp"
 #include "Input.hpp"
-
+#include "ViewHandler.hpp"
 
 Planet::Planet()
 {
-	//sf::Font font;
-	//font.loadFromFile("Font/FreeSans.ttf");
-	//m_planet_name->setFont(font);
+	m_font = std::make_unique<sf::Font>();
+	m_planet_name = std::make_unique<sf::Text>();
+
+	m_font->loadFromFile("../Assets/Arcon-Regular.otf");
+	m_planet_name->setFont(*m_font);
 }
 
 Planet::~Planet()
@@ -28,9 +31,6 @@ Planet::~Planet()
 
 void Planet::Update(float dt)
 {
-	Vector2f temp = GetPosition();
-	//m_planet_name->setOrigin(temp.SFML_VEC());
-
 	for (unsigned int i = 0; i < m_orbiting.size(); i++)
 	{
 		m_orbiting[i]->Update(dt);
@@ -59,8 +59,8 @@ OrbitingPlanet * Planet::GetOrbitingPlanet(unsigned int i)
 
 void Planet::SetName(const std::string &name)
 {
-	//m_planet_name->setString(name);
-	//m_planet_name->setColor(sf::Color::White);
+	m_planet_name->setString(name);
+	m_planet_name->setColor(sf::Color::White);
 }
 
 void Planet::SetTextSize(unsigned int size)
@@ -76,8 +76,14 @@ void Planet::draw(sf::RenderTarget & target, sf::RenderStates states) const
 
 	circle.setPosition(screenPos.x, WNDH - screenPos.y);
 
+	m_planet_name->setScale(ViewHandler::Get()->GetViewSize() * 0.0004f);
+	m_planet_name->setOrigin(
+		m_planet_name->getLocalBounds().width / 2.0f, 
+		m_planet_name->getLocalBounds().height);
+	m_planet_name->setPosition(screenPos.x, WNDH - screenPos.y - m_visual_radius - 20.0f * m_planet_name->getScale().y);
+
 	target.draw(circle, states);
-	//target.draw(*m_planet_name, states);
+	target.draw(*m_planet_name, states);
 
 	for (unsigned int i = 0; i < m_orbiting.size(); i++)
 	{

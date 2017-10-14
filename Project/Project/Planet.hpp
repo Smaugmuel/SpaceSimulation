@@ -34,6 +34,7 @@ public:
 protected:
 	std::vector<OrbitingPlanet*> m_orbiting;
 	std::unique_ptr<sf::Text> m_planet_name;
+	std::unique_ptr<sf::Font> m_font;
 private:
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 };

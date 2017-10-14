@@ -1,4 +1,5 @@
 #include <SFML\Window\Event.hpp>
+#include <SFML\Graphics\RenderWindow.hpp>
 #include <crtdbg.h>
 
 #include "SystemInformation.hpp"
