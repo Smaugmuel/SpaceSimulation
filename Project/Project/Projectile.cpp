@@ -89,8 +89,6 @@ void Projectile::SetRadius(double radius)
 {
 	m_radius = radius;
 	UpdateVisualRadius();
-	// Modify visual radius
-	//UpdateVisualRadius(std::powf(2, std::log10f(m_radius) - 4.5));
 }
 
 void Projectile::SetIsCrashed(bool isCrashed)
@@ -102,7 +100,9 @@ void Projectile::UpdateVisualRadius()
 {
 	//m_visual_radius = std::powf(2, std::log10f(m_radius) - 4.5);
 	m_visual_radius = std::powf(2, std::log10f(m_radius) - 5.5);
-
+	
+	// Actual sizes.
+	//m_visual_radius = m_radius * PX_PER_M;
 
 	m_circle.setRadius(m_visual_radius);
 	m_circle.setOrigin(m_visual_radius, m_visual_radius);

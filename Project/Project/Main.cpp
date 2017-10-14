@@ -1,9 +1,11 @@
 #include <SFML\Window\Event.hpp>
+#include <SFML\Graphics\RenderWindow.hpp>
 #include <crtdbg.h>
 
 #include "SystemInformation.hpp"
 #include "OrbitSimulation.hpp"
 #include "Input.hpp"
+#include "ViewHandler.hpp"
 
 #include "FPS_Counter.hpp"
 
@@ -21,16 +23,16 @@ int main()
 
 	window.setView(view);
 
-	Input::Get()->SetWindow(&window);
-	Input::Get()->SetView(&view);
-	Input::Get()->SetEvent(&event);
+	ViewHandler::Get()->SetWindow(&window);
+	ViewHandler::Get()->SetView(&view);
+	ViewHandler::Get()->SetEvent(&event);
 
 	OrbitSimulation simulation;
 
 
 	while (window.isOpen())
 	{
-		Input::Get()->UpdateWindow();
+		ViewHandler::Get()->UpdateWindow();
 
 		float elapsedTime = 0.0f;
 
@@ -51,6 +53,7 @@ int main()
 	}
 
 	Input::Delete();
+	ViewHandler::Delete();
 
 	return 0;
 }
