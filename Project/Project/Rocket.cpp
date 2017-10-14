@@ -4,20 +4,20 @@
 #include "SystemInformation.hpp"
 
 Rocket::Rocket()
-	: Rocket::Rocket(0.0, 0.0, 0.0, 0.0)
+	: Rocket::Rocket(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
 {
 }
 
-Rocket::Rocket(Vector2d position, Vector2d velocity)
-	: Rocket::Rocket(position.x, position.y, velocity.x, velocity.y)
+Rocket::Rocket(Vector2d position, Vector2d velocity, Vector2d acceleration)
+	: Rocket::Rocket(position.x, position.y, velocity.x, velocity.y, acceleration.x, acceleration.y)
 {
 }
 
-Rocket::Rocket(double x, double y, double vx, double vy)
+Rocket::Rocket(double x, double y, double vx, double vy, double ax, double ay)
 {
 	m_position = Vector2d(x, y);
 	m_velocity = Vector2d(vx, vy);
-	m_acceleration = Vector2d(0.0, 0.0);
+	m_acceleration = Vector2d(ax, ay);
 
 	m_payloadMass = 1e5;		// 100 tonne
 	m_steps.push_back(new Step);
@@ -25,11 +25,13 @@ Rocket::Rocket(double x, double y, double vx, double vy)
 	m_isThrusting = false;
 
 	m_triangle.setPointCount(3);
-	m_triangle.setRadius(7.0f);
-	m_triangle.setOrigin(10.0f, 10.0f);
+	m_triangle.setRadius(2.0f);
+	m_triangle.setOrigin(2.0f, 2.0f);
 	m_triangle.setPosition(x * PX_PER_M, y * PX_PER_M);
 	m_triangle.setScale(1.0f, 2.0f);
 	m_triangle.setFillColor(sf::Color::Magenta);
+
+	UpdateRotation();
 }
 
 Rocket::~Rocket()
@@ -47,11 +49,7 @@ void Rocket::Update(float dt)
 	m_velocity += m_acceleration * dt;
 
 	UpdateThrust(dt);
-
-	Vector2d e_v = m_velocity.Normalized();
-	int positive = (float)e_v.y / std::fabsf((float)e_v.y);
-	float rotation = positive * std::acosf(e_v.x) * 180 / 3.1415927f;
-	m_triangle.setRotation(90 - rotation);
+	UpdateRotation();
 }
 
 void Rocket::UpdateThrust(float dt)
@@ -80,6 +78,19 @@ void Rocket::UpdateThrust(float dt)
 			m_isThrusting = false;
 		}
 	}
+}
+
+void Rocket::UpdateRotation()
+{
+	Vector2d e_v = (m_velocity + m_acceleration).Normalized();
+
+	if (e_v.LengthSquared() > 0.0)
+	{
+		int positive = (float)e_v.y / std::fabsf((float)e_v.y);
+		m_rotation = positive * std::acosf(e_v.x) * 180 / 3.1415927f;
+	}
+	
+	m_triangle.setRotation(90 - m_rotation);
 }
 
 void Rocket::SetPosition(const Vector2d & position)
@@ -113,6 +124,12 @@ void Rocket::SetAcceleration(double x, double y)
 {
 	m_acceleration.x = x;
 	m_acceleration.y = y;
+}
+
+void Rocket::SetRotation(double rotation)
+{
+	m_rotation = rotation;
+	UpdateRotation();
 }
 
 void Rocket::SetPayloadMass(double mass)

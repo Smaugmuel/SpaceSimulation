@@ -25,12 +25,8 @@ OrbitSimulation::OrbitSimulation()
 	m_planetSystem = new PlanetSystem;
 	m_planetSystem->GetPlanets(m_planets);		// Bad design, see header file
 
-	//m_projectile = new Projectile(1.5858e12, WNDH * 0.5 / PX_PER_M - 7.0e9, 0.0 / PX_PER_M, 7399.79);
-	//m_projectile->SetVisualRadius(10);
-	//m_projectile->SetColor(sf::Color::Magenta);
-
 	m_paused = false;
-	m_years_per_second = 0.1;
+	m_years_per_second = 0.0001;
 }
 
 OrbitSimulation::~OrbitSimulation()
@@ -179,7 +175,6 @@ void OrbitSimulation::draw(sf::RenderTarget & target, sf::RenderStates states) c
 
 void OrbitSimulation::detectCrash() 
 {
-	
 	for (unsigned int i = 0; i < m_projectiles.size(); i++) 
 	{
 		for (unsigned int j=0; j < m_planets.size(); j++) 
@@ -196,9 +191,10 @@ void OrbitSimulation::detectCrash()
 				//m_projectiles.erase(m_projectiles.begin() + i);
 			
 				//i--;
-			} 
+			}
 		}
 	}
+
 	for (unsigned int i = 0; i < m_projectiles.size(); i++)
 	{
 		if (m_projectiles[i]->GetIsCrashed())

@@ -32,8 +32,6 @@ public:
 	const double& GetEscapeVelocity() const;
 	const double& GetFuelMassLossPerSecond() const;
 
-	double GetThrust() const;
-
 private:
 	double m_exhaustVelocity;
 	double m_hullMass;
@@ -44,13 +42,14 @@ private:
 class Rocket : public sf::Drawable
 {
 public:
-	Rocket(Vector2d position, Vector2d velocity);
-	Rocket(double x, double y, double vx, double vy);
+	Rocket(Vector2d position, Vector2d velocity, Vector2d acceleration);
+	Rocket(double x, double y, double vx, double vy, double ax, double ay);
 	Rocket();
 	~Rocket();
 
 	void Update(float dt);
 	void UpdateThrust(float dt);
+	void UpdateRotation();
 
 	void SetPosition(const Vector2d& position);
 	void SetPosition(double x, double y);
@@ -58,7 +57,7 @@ public:
 	void SetVelocity(double x, double y);
 	void SetAcceleration(const Vector2d& acceleration);
 	void SetAcceleration(double x, double y);
-
+	void SetRotation(double rotation);
 	void SetPayloadMass(double mass);
 	
 	void ToggleThrust();
