@@ -21,7 +21,7 @@ public:
 
 	void SetHullMass(double mass);
 	void SetFuelMass(double mass);
-	void SetEscapeVelocity(double ve);
+	void SetExhaustVelocity(double ve);
 	void SetFuelMassLossPerSecond(double m);
 
 	void AddFuelMass(double mass);
@@ -29,7 +29,7 @@ public:
 	const double& GetHullMass() const;
 	const double& GetFuelMass() const;
 	const double& GetTotalMass() const;
-	const double& GetEscapeVelocity() const;
+	const double& GetExhaustVelocity() const;
 	const double& GetFuelMassLossPerSecond() const;
 
 private:
@@ -68,6 +68,8 @@ public:
 	void AddVelocity(double x, double y);
 	void AddAcceleration(const Vector2d& v);
 	void AddAcceleration(double x, double y);
+
+	void AddStep(double grossMass, double emptyMass, double specificImpulse, double burnTime);
 
 	const Vector2d& GetPosition() const;
 	const Vector2d& GetVelocity() const;

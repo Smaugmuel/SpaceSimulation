@@ -40,6 +40,8 @@ void Projectile::Update(float dt)
 {
 	m_position += m_velocity * dt;
 	m_velocity += m_acceleration * dt;
+
+	m_acceleration = Vector2d(0.0, 0.0);
 }
 
 void Projectile::SetPosition(const Vector2d & position)
@@ -98,8 +100,7 @@ void Projectile::SetIsCrashed(bool isCrashed)
 
 void Projectile::UpdateVisualRadius()
 {
-	//m_visual_radius = std::powf(2, std::log10f(m_radius) - 4.5);
-	m_visual_radius = std::powf(2, std::log10f(m_radius) - 5.5);
+	m_visual_radius = m_radius * PX_PER_M;//std::powf(2, std::log10f(m_radius) - 5.5);
 	
 	// Actual sizes.
 	//m_visual_radius = m_radius * PX_PER_M;

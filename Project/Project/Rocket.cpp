@@ -2,6 +2,7 @@
 #include <SFML\Graphics\RenderTarget.hpp>
 #include <SFML\Graphics\RenderStates.hpp>
 #include "SystemInformation.hpp"
+#include "ViewHandler.hpp"
 
 Rocket::Rocket()
 	: Rocket::Rocket(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
@@ -19,14 +20,14 @@ Rocket::Rocket(double x, double y, double vx, double vy, double ax, double ay)
 	m_velocity = Vector2d(vx, vy);
 	m_acceleration = Vector2d(ax, ay);
 
-	m_payloadMass = 1e5;		// 100 tonne
-	m_steps.push_back(new Step);
+	m_payloadMass = 140000;
+	AddStep(2290000, 130000, 263, 165);
 
-	m_isThrusting = false;
+	m_isThrusting = true;
 
 	m_triangle.setPointCount(3);
 	m_triangle.setRadius(2.0f);
-	m_triangle.setOrigin(2.0f, 2.0f);
+	m_triangle.setOrigin(2.0f, 0.0f);
 	m_triangle.setPosition(x * PX_PER_M, y * PX_PER_M);
 	m_triangle.setScale(1.0f, 2.0f);
 	m_triangle.setFillColor(sf::Color::Magenta);
@@ -48,12 +49,15 @@ void Rocket::Update(float dt)
 	m_position += m_velocity * dt;
 	m_velocity += m_acceleration * dt;
 
+	m_acceleration = Vector2d(0.0, 0.0);
+
 	UpdateThrust(dt);
 	UpdateRotation();
 }
 
 void Rocket::UpdateThrust(float dt)
 {
+	return;
 	if (m_steps.empty())
 	{
 		m_isThrusting = false;
@@ -63,26 +67,31 @@ void Rocket::UpdateThrust(float dt)
 	{
 		Step* step = m_steps.front();
 
+		// Calculate the mass of fuel used during this iteration
 		double fuelMassLoss = step->GetFuelMassLossPerSecond() * dt;
 		double actualFuelMassLoss = std::min(step->GetFuelMass(), fuelMassLoss);
 
-		double acc = actualFuelMassLoss * step->GetEscapeVelocity() / GetTotalMass();
+		// Acceleration based on mass before fuel loss. Multiplication by dt should occur only in Update()
+		double acceleration = actualFuelMassLoss * step->GetExhaustVelocity() / GetTotalMass() / dt;
+		double rotation = /*m_rotation*/45 * 3.1415927 / 180;
+		m_acceleration += Vector2d(cos(rotation), sin(rotation)) * acceleration;
 
-		m_steps.front()->AddFuelMass(-actualFuelMassLoss);
-
-		m_acceleration += m_velocity.Normalized() * acc;
-
-		if (actualFuelMassLoss >= step->GetFuelMass())
+		// Decrease mass, or remove step
+		if (actualFuelMassLoss < step->GetFuelMass())
 		{
-			step->SetFuelMass(0.0);
-			m_isThrusting = false;
+			step->AddFuelMass(-actualFuelMassLoss);
+		}
+		else
+		{
+			delete step;
+			m_steps.pop_front();
 		}
 	}
 }
 
 void Rocket::UpdateRotation()
 {
-	Vector2d e_v = (m_velocity + m_acceleration).Normalized();
+	Vector2d e_v = m_velocity.Normalized();
 
 	if (e_v.LengthSquared() > 0.0)
 	{
@@ -175,6 +184,18 @@ void Rocket::AddAcceleration(double x, double y)
 	m_acceleration.y += y;
 }
 
+void Rocket::AddStep(double grossMass, double emptyMass, double specificImpulse, double burnTime)
+{
+	Step* step = new Step;
+
+	step->SetFuelMass(grossMass - emptyMass);
+	step->SetHullMass(emptyMass);
+	step->SetExhaustVelocity(specificImpulse * 9.82);
+	step->SetFuelMassLossPerSecond(step->GetFuelMass() / burnTime);
+
+	m_steps.push_back(step);
+}
+
 const Vector2d & Rocket::GetPosition() const
 {
 	return m_position;
@@ -217,6 +238,7 @@ void Rocket::draw(sf::RenderTarget & target, sf::RenderStates states) const
 
 	Vector2f screenPos = m_position * PX_PER_M;
 	triangle.setPosition(screenPos.x, WNDH - screenPos.y);
+	triangle.setScale(sf::Vector2f(1.0f, 2.0f) * (ViewHandler::Get()->GetViewSize().x * 0.002f));
 
 	target.draw(triangle, states);
 }
@@ -225,10 +247,26 @@ void Rocket::draw(sf::RenderTarget & target, sf::RenderStates states) const
 
 Step::Step()
 {
-	m_hullMass = 1e10;
-	m_fuelMass = 2.2e13;
-	m_fuelMassLossPerSecond = 1e6;
-	m_exhaustVelocity = 2.5e3;
+	/*
+	First Step
+	-----------------------------------
+
+	Total mass 
+	Gross mass of first step	m = 2,290,000 kg
+	Thrust at sea level			35,100,000 N
+	Specific impulse			263 s
+	Burn time					165 s
+
+	
+	*/
+
+	// Gross mass: 2290000
+
+	// Approximate values taken from Saturn V's first step
+	m_hullMass = 100000;
+	m_fuelMass = 2000000;
+	m_fuelMassLossPerSecond = 1000000;
+	m_exhaustVelocity = 2000;
 }
 
 Step::~Step()
@@ -249,7 +287,7 @@ void Step::SetFuelMass(double mass)
 	m_fuelMass = mass;
 }
 
-void Step::SetEscapeVelocity(double ve)
+void Step::SetExhaustVelocity(double ve)
 {
 	m_exhaustVelocity = ve;
 }
@@ -279,7 +317,7 @@ const double& Step::GetTotalMass() const
 	return m_hullMass + m_fuelMass;
 }
 
-const double& Step::GetEscapeVelocity() const
+const double& Step::GetExhaustVelocity() const
 {
 	return m_exhaustVelocity;
 }

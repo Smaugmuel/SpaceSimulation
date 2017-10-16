@@ -35,6 +35,7 @@ private:
 
 	bool m_paused;
 	double m_years_per_second;
+	double m_time_skip;
 };
 
 #endif

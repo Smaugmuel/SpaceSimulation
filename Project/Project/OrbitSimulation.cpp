@@ -24,10 +24,11 @@ OrbitSimulation::OrbitSimulation()
 {
 	m_planetSystem = new PlanetSystem;
 	m_planetSystem->GetPlanets(m_planets);		// Bad design, see header file
+	m_planetSystem->Update(0.0f);				// Initialize
 
 	m_paused = false;
 
-	m_years_per_second = 0.0001;
+	m_years_per_second = m_time_skip = EARTH_YEAR_PER_SECOND * 4;
 }
 
 OrbitSimulation::~OrbitSimulation()
@@ -61,10 +62,7 @@ void OrbitSimulation::Update(float dt)
 	detectCrash();
 	if (!m_paused)
 	{
-		double secondsInOneEarthYear = 3.15576e7;
-
-		UpdateMovements(secondsInOneEarthYear * m_years_per_second * dt);
-
+		UpdateMovements(SECONDS_PER_EARTH_YEAR * m_years_per_second * dt);
 		UpdateProjectileAcceleration();
 	}
 }
@@ -73,16 +71,16 @@ void OrbitSimulation::UpdateInput()
 {
 	Input::Get()->UpdateInput();
 
-	if (Input::Get()->IsMousePressed(sf::Mouse::Button::Left))
+	if (Input::Get()->IsMousePressed(sf::Mouse::Button::Right))
 	{
 		m_rockets.push_back(RocketFactory::CreateRocket(m_planets[3]));
 		//m_projectiles.push_back(ProjectileFactory::CreateProjectile(m_planets[3]));
 	}
-	if (Input::Get()->IsMousePressed(sf::Mouse::Button::Right))
-	{
-		m_rockets.push_back(RocketFactory::CreateRocket(m_planets[5]));
-		//m_projectiles.push_back(ProjectileFactory::CreateProjectile(m_planets[5]));
-	}
+	//if (Input::Get()->IsMousePressed(sf::Mouse::Button::Right))
+	//{
+	//	m_rockets.push_back(RocketFactory::CreateRocket(m_planets[5]));
+	//	//m_projectiles.push_back(ProjectileFactory::CreateProjectile(m_planets[5]));
+	//}
 
 	if (Input::Get()->IsKeyPressed(sf::Keyboard::Key::Space))
 	{
@@ -90,11 +88,19 @@ void OrbitSimulation::UpdateInput()
 	}
 	if (Input::Get()->IsKeyPressed(sf::Keyboard::Key::Up))
 	{
-		m_years_per_second += 0.001;
+		m_years_per_second += m_time_skip;
 	}
 	if (Input::Get()->IsKeyPressed(sf::Keyboard::Key::Down))
 	{
-		m_years_per_second -= 0.001;
+		m_years_per_second -= m_time_skip;
+	}
+	if (Input::Get()->IsKeyPressed(sf::Keyboard::Key::Right))
+	{
+		m_years_per_second += m_time_skip * 10.0;
+	}
+	if (Input::Get()->IsKeyPressed(sf::Keyboard::Key::Left))
+	{
+		m_years_per_second -= m_time_skip * 10.0;
 	}
 
 	if (Input::Get()->IsKeyPressed(sf::Keyboard::Key::Num1))
@@ -108,7 +114,7 @@ void OrbitSimulation::UpdateInput()
 
 void OrbitSimulation::UpdateMovements(float dt)
 {
-	m_planetSystem->Update(dt);
+	//m_planetSystem->Update(dt);
 
 	for (unsigned int i = 0; i < m_projectiles.size(); i++)
 	{
@@ -128,8 +134,6 @@ void OrbitSimulation::UpdateProjectileAcceleration()
 
 	for (unsigned int i = 0; i < m_projectiles.size(); i++)
 	{
-		m_projectiles[i]->SetAcceleration(0.0, 0.0);
-
 		for (unsigned int j = 0; j < m_planets.size(); j++)
 		{
 			Vector2d direction = m_planets[j]->GetPosition() - m_projectiles[i]->GetPosition();
@@ -144,8 +148,6 @@ void OrbitSimulation::UpdateProjectileAcceleration()
 
 	for (unsigned int i = 0; i < m_rockets.size(); i++)
 	{
-		m_rockets[i]->SetAcceleration(0.0, 0.0);
-
 		for (unsigned int j = 0; j < m_planets.size(); j++)
 		{
 			Vector2d direction = m_planets[j]->GetPosition() - m_rockets[i]->GetPosition();
