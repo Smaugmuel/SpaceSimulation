@@ -2,6 +2,7 @@
 #include <SFML\Graphics\RenderTarget.hpp>
 #include <SFML\Graphics\RenderStates.hpp>
 #include "SystemInformation.hpp"
+#include "ViewHandler.hpp"
 
 Projectile::Projectile()
 	: Projectile::Projectile(0.0f, 0.0f, 0.0f, 0.0f)
@@ -191,7 +192,7 @@ void Projectile::draw(sf::RenderTarget & target, sf::RenderStates states) const
 {
 	sf::CircleShape circle = m_circle;
 
-	Vector2d screenPos = m_position * PX_PER_M;
+	Vector2d screenPos = (m_position - ViewHandler::Get()->GetOriginOffset())* PX_PER_M;
 
 	circle.setPosition(screenPos.x, WNDH - screenPos.y);
 

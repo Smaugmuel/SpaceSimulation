@@ -236,7 +236,7 @@ void Rocket::draw(sf::RenderTarget & target, sf::RenderStates states) const
 {
 	sf::CircleShape triangle = m_triangle;
 
-	Vector2f screenPos = m_position * PX_PER_M;
+	Vector2f screenPos = (m_position - ViewHandler::Get()->GetOriginOffset()) * PX_PER_M;
 	triangle.setPosition(screenPos.x, WNDH - screenPos.y);
 	triangle.setScale(sf::Vector2f(1.0f, 2.0f) * (ViewHandler::Get()->GetViewSize().x * 0.002f));
 

@@ -72,7 +72,7 @@ void Planet::draw(sf::RenderTarget & target, sf::RenderStates states) const
 {
 	sf::CircleShape circle = m_circle;
 
-	Vector2d screenPos = m_position * PX_PER_M;
+	Vector2d screenPos = (m_position - ViewHandler::Get()->GetOriginOffset())* PX_PER_M;
 
 	circle.setPosition(screenPos.x, WNDH - screenPos.y);
 

@@ -60,14 +60,15 @@ void OrbitingPlanet::draw(sf::RenderTarget & target, sf::RenderStates states) co
 	orbit.setOutlineThickness(ViewHandler::Get()->GetViewSize().y * 0.001f);
 	orbit.setFillColor(sf::Color::Transparent);
 	orbit.setOutlineColor(sf::Color(255, 255, 255, 50));
-	orbit.setPosition(0.0, WNDH - 0.0);
-
+	
+	Vector2d originpos = ViewHandler::Get()->GetOriginOffset();
+	orbit.setPosition(-originpos.x, WNDH + originpos.y);
 
 	target.draw(orbit, states);
 
 	sf::CircleShape circle = m_circle;
 
-	Vector2d screenPos = m_position * PX_PER_M;
+	Vector2d screenPos = (m_position - ViewHandler::Get()->GetOriginOffset())* PX_PER_M;
 
 	circle.setPosition(screenPos.x, WNDH - screenPos.y);
 

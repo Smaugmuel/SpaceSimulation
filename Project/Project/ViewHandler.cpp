@@ -36,8 +36,7 @@ void ViewHandler::UpdateWindow()
 				const sf::Vector2f newPos = m_window->mapPixelToCoords(sf::Vector2i(m_event->mouseMove.x, m_event->mouseMove.y));
 				const sf::Vector2f delta = oldPos - newPos;
 
-				m_view->setCenter(m_view->getCenter() + delta);
-				m_window->setView(*m_view);
+				UpdateOriginOffset(delta);
 			}
 			oldPos = m_window->mapPixelToCoords(sf::Vector2i(m_event->mouseMove.x, m_event->mouseMove.y));
 		}
@@ -57,8 +56,7 @@ void ViewHandler::ZoomInOnMouse()
 
 	const sf::Vector2f afterCoord{ m_window->mapPixelToCoords(pixelPos) };
 	const sf::Vector2f offsetCoords{ beforeCoord - afterCoord };
-	m_view->move(offsetCoords);
-	m_window->setView(*m_view);
+	UpdateOriginOffset(offsetCoords);
 }
 
 const sf::Vector2f& ViewHandler::GetMouseWindowPixelPosition() const
@@ -85,4 +83,15 @@ void ViewHandler::SetView(sf::View* view)
 void ViewHandler::SetEvent(sf::Event* event)
 {
 	m_event = event;
+}
+
+const Vector2d& ViewHandler::GetOriginOffset() const
+{
+	return m_origin_offset;
+}
+
+void ViewHandler::UpdateOriginOffset(const sf::Vector2f& delta)
+{
+	m_origin_offset.x += delta.x;
+	m_origin_offset.y -= delta.y;
 }
