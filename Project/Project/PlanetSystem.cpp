@@ -9,7 +9,7 @@ PlanetSystem::PlanetSystem()
 {
 	// Sun
 	m_center = new Planet;
-	m_center->SetPosition(WNDW * 0.5 / PX_PER_M, WNDH * 0.5 / PX_PER_M);
+	m_center->SetPosition(0.0, 0.0);
 	m_center->SetColor(sf::Color(255, 255, 0));
 	m_center->SetRadius(6.957e8);
 	m_center->SetMass(1.989e30);

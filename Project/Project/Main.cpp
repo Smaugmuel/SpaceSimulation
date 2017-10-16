@@ -18,6 +18,7 @@ int main()
 	settings.antialiasingLevel = 16;
 	sf::RenderWindow window(sf::VideoMode(WNDW, WNDH), "PhysicsTest", sf::Style::Default, settings);
 	sf::View view = window.getDefaultView();
+	view.zoom(1.5e9f);
 	sf::Clock time;
 	sf::Event event;
 
