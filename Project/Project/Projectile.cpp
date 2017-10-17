@@ -28,7 +28,7 @@ Projectile::Projectile(double x, double y, double vx, double vy)
 
 	m_circle.setFillColor(sf::Color::Red);
 	m_circle.setPosition(x * PX_PER_M, y * PX_PER_M);
-	m_circle.setPointCount(100);
+	m_circle.setPointCount(200);
 
 	m_isCrashed = false;
 }
@@ -41,8 +41,6 @@ void Projectile::Update(float dt)
 {
 	m_position += m_velocity * dt;
 	m_velocity += m_acceleration * dt;
-
-	m_acceleration = Vector2d(0.0, 0.0);
 }
 
 void Projectile::SetPosition(const Vector2d & position)
@@ -153,7 +151,7 @@ const Vector2d & Projectile::GetPosition() const
 	return m_position;
 }
 
-const Vector2d & Projectile::GetVelocity() const
+Vector2d Projectile::GetVelocity() const
 {
 	return m_velocity;
 }

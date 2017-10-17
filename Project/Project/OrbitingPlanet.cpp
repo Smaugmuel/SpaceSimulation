@@ -49,6 +49,14 @@ double OrbitingPlanet::GetOrbitRadius()const
 	return m_orbitRadius;
 }
 
+Vector2d OrbitingPlanet::GetVelocity() const
+{
+	double angularVelocity = 2 * 3.1415927 / m_orbitTime;
+	double speed = angularVelocity * m_orbitRadius;
+	Vector2d sunToPlanet = Vector2d(std::cos(m_orbitAngle), std::sin(m_orbitAngle)) * m_orbitRadius;
+	return sunToPlanet.Orthogonal().Normalized() * speed;
+}
+
 void OrbitingPlanet::draw(sf::RenderTarget & target, sf::RenderStates states) const
 {
 	// Most of this should probably be moved elsewhere since it's constant

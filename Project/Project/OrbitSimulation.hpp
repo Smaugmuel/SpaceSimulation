@@ -24,7 +24,7 @@ public:
 private:
 	void UpdateInput();
 	void UpdateMovements(float dt);
-	void UpdateProjectileAcceleration();
+	void UpdateAccelerations(float dt);
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 	void detectCrash();
 	PlanetSystem* m_planetSystem;

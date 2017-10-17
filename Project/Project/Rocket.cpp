@@ -3,25 +3,25 @@
 #include <SFML\Graphics\RenderStates.hpp>
 #include "SystemInformation.hpp"
 #include "ViewHandler.hpp"
+#include "Planet.hpp"
 
-Rocket::Rocket()
-	: Rocket::Rocket(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+Rocket::Rocket(Vector2d position, Vector2d velocity, Vector2d acceleration, Vector2d direction, Planet* startPlanet)
+	: Rocket::Rocket(position.x, position.y, velocity.x, velocity.y, acceleration.x, acceleration.y, direction.x, direction.y, startPlanet)
 {
 }
 
-Rocket::Rocket(Vector2d position, Vector2d velocity, Vector2d acceleration)
-	: Rocket::Rocket(position.x, position.y, velocity.x, velocity.y, acceleration.x, acceleration.y)
-{
-}
-
-Rocket::Rocket(double x, double y, double vx, double vy, double ax, double ay)
+Rocket::Rocket(double x, double y, double vx, double vy, double ax, double ay, double dx, double dy, Planet* startPlanet)
 {
 	m_position = Vector2d(x, y);
 	m_velocity = Vector2d(vx, vy);
 	m_acceleration = Vector2d(ax, ay);
+	m_direction = m_startDirection = Vector2d(dx, dy);
 
+	// Data from Saturn V and its first stage
 	m_payloadMass = 140000;
-	AddStep(2290000, 130000, 263, 165);
+	AddStage(2290000, 130000, 263, 165);
+
+	m_orbitedPlanet = startPlanet;
 
 	m_isThrusting = true;
 
@@ -32,15 +32,17 @@ Rocket::Rocket(double x, double y, double vx, double vy, double ax, double ay)
 	m_triangle.setScale(1.0f, 2.0f);
 	m_triangle.setFillColor(sf::Color::Magenta);
 
-	UpdateRotation();
+	int positive = m_direction.y / std::abs(m_direction.y);
+	double rotation = positive * std::acosf(m_direction.x) * 180 / 3.1415927f;
+	m_triangle.setRotation(90 - rotation);
 }
 
 Rocket::~Rocket()
 {
-	while (m_steps.size())
+	while (m_stages.size())
 	{
-		delete m_steps.front();
-		m_steps.pop_front();
+		delete m_stages.front();
+		m_stages.pop_front();
 	}
 }
 
@@ -48,58 +50,57 @@ void Rocket::Update(float dt)
 {
 	m_position += m_velocity * dt;
 	m_velocity += m_acceleration * dt;
-
-	m_acceleration = Vector2d(0.0, 0.0);
-
-	UpdateThrust(dt);
-	UpdateRotation();
 }
 
 void Rocket::UpdateThrust(float dt)
 {
-	return;
-	if (m_steps.empty())
+	static int counter = 0;
+	counter++;
+
+	if (m_stages.empty())
 	{
 		m_isThrusting = false;
 	}
 
 	if (m_isThrusting)
 	{
-		Step* step = m_steps.front();
+		Stage* stage = m_stages.front();
 
-		// Calculate the mass of fuel used during this iteration
-		double fuelMassLoss = step->GetFuelMassLossPerSecond() * dt;
-		double actualFuelMassLoss = std::min(step->GetFuelMass(), fuelMassLoss);
+		// Mass of fuel used during this iteration
+		double burnAmount = stage->GetBurnRate() * dt;
 
-		// Acceleration based on mass before fuel loss. Multiplication by dt should occur only in Update()
-		double acceleration = actualFuelMassLoss * step->GetExhaustVelocity() / GetTotalMass() / dt;
-		double rotation = /*m_rotation*/45 * 3.1415927 / 180;
-		m_acceleration += Vector2d(cos(rotation), sin(rotation)) * acceleration;
+		// Acceleration based on mass before burning fuel
+		double acceleration = stage->GetThrust() / GetTotalMass();
 
-		// Decrease mass, or remove step
-		if (actualFuelMassLoss < step->GetFuelMass())
+		// Decrease fuel. Remove stage if fuel is out
+		stage->AddFuelMass(-burnAmount);
+		if (stage->GetFuelMass() < 0.0)
 		{
-			step->AddFuelMass(-actualFuelMassLoss);
+			delete stage;
+			m_stages.pop_front();
 		}
-		else
+
+		m_acceleration += m_direction * acceleration;
+
+		if (m_acceleration.x < 0.0 || m_acceleration.y < 0.0)
 		{
-			delete step;
-			m_steps.pop_front();
+			m_direction = m_direction;
 		}
 	}
 }
 
 void Rocket::UpdateRotation()
 {
-	Vector2d e_v = m_velocity.Normalized();
+	// Velocity and acceleration relative to the planet currently orbited
+	Vector2d v_rel = m_velocity - m_orbitedPlanet->GetVelocity();
 
-	if (e_v.LengthSquared() > 0.0)
-	{
-		int positive = (float)e_v.y / std::fabsf((float)e_v.y);
-		m_rotation = positive * std::acosf(e_v.x) * 180 / 3.1415927f;
-	}
+	// Add acceleration, since relative start velocity is 0
+	m_direction = (v_rel + m_acceleration).Normalized();
+
+	int positive = m_direction.y / std::abs(m_direction.y);
+	double rotation = positive * std::acosf(m_direction.x) * 180 / 3.1415927f;
 	
-	m_triangle.setRotation(90 - m_rotation);
+	m_triangle.setRotation(90 - rotation);
 }
 
 void Rocket::SetPosition(const Vector2d & position)
@@ -137,13 +138,17 @@ void Rocket::SetAcceleration(double x, double y)
 
 void Rocket::SetRotation(double rotation)
 {
-	m_rotation = rotation;
-	UpdateRotation();
+	m_direction = Vector2d(std::cos(rotation), std::sin(rotation));
 }
 
 void Rocket::SetPayloadMass(double mass)
 {
 	m_payloadMass = mass;
+}
+
+void Rocket::SetOrbitedPlanet(Planet * planet)
+{
+	m_orbitedPlanet = planet;
 }
 
 void Rocket::ToggleThrust()
@@ -184,16 +189,16 @@ void Rocket::AddAcceleration(double x, double y)
 	m_acceleration.y += y;
 }
 
-void Rocket::AddStep(double grossMass, double emptyMass, double specificImpulse, double burnTime)
+void Rocket::AddStage(double grossMass, double emptyMass, double specificImpulse, double burnTime)
 {
-	Step* step = new Step;
+	Stage* stage = new Stage;
 
-	step->SetFuelMass(grossMass - emptyMass);
-	step->SetHullMass(emptyMass);
-	step->SetExhaustVelocity(specificImpulse * 9.82);
-	step->SetFuelMassLossPerSecond(step->GetFuelMass() / burnTime);
+	stage->SetFuelMass(grossMass - emptyMass);
+	stage->SetHullMass(emptyMass);
+	stage->SetExhaustVelocity(specificImpulse * 9.82);
+	stage->SetBurnRate(stage->GetFuelMass() / burnTime);
 
-	m_steps.push_back(step);
+	m_stages.push_back(stage);
 }
 
 const Vector2d & Rocket::GetPosition() const
@@ -220,9 +225,9 @@ const double & Rocket::GetTotalMass() const
 {
 	double mass = m_payloadMass;
 
-	for (auto& step : m_steps)
+	for (auto& stage : m_stages)
 	{
-		mass += step->GetTotalMass();
+		mass += stage->GetTotalMass();
 	}
 	return mass;
 }
@@ -245,14 +250,14 @@ void Rocket::draw(sf::RenderTarget & target, sf::RenderStates states) const
 
 
 
-Step::Step()
+Stage::Stage()
 {
 	/*
-	First Step
+	First stage
 	-----------------------------------
 
 	Total mass 
-	Gross mass of first step	m = 2,290,000 kg
+	Gross mass of first stage	m = 2,290,000 kg
 	Thrust at sea level			35,100,000 N
 	Specific impulse			263 s
 	Burn time					165 s
@@ -262,67 +267,72 @@ Step::Step()
 
 	// Gross mass: 2290000
 
-	// Approximate values taken from Saturn V's first step
+	// Approximate values taken from Saturn V's first stage
 	m_hullMass = 100000;
 	m_fuelMass = 2000000;
-	m_fuelMassLossPerSecond = 1000000;
+	m_burnRate = 1000000;
 	m_exhaustVelocity = 2000;
 }
 
-Step::~Step()
+Stage::~Stage()
 {
 }
 
-void Step::Update(float dt)
+void Stage::Update(float dt)
 {
 }
 
-void Step::SetHullMass(double mass)
+void Stage::SetHullMass(double mass)
 {
 	m_hullMass = mass;
 }
 
-void Step::SetFuelMass(double mass)
+void Stage::SetFuelMass(double mass)
 {
 	m_fuelMass = mass;
 }
 
-void Step::SetExhaustVelocity(double ve)
+void Stage::SetExhaustVelocity(double ve)
 {
 	m_exhaustVelocity = ve;
 }
 
-void Step::SetFuelMassLossPerSecond(double m)
+void Stage::SetBurnRate(double m)
 {
-	m_fuelMassLossPerSecond = m;
+	m_burnRate = m;
 }
 
-void Step::AddFuelMass(double mass)
+void Stage::AddFuelMass(double mass)
 {
 	m_fuelMass += mass;
 }
 
-const double& Step::GetHullMass() const
+const double& Stage::GetHullMass() const
 {
 	return m_hullMass;
 }
 
-const double& Step::GetFuelMass() const
+const double& Stage::GetFuelMass() const
 {
 	return m_fuelMass;
 }
 
-const double& Step::GetTotalMass() const
+const double& Stage::GetTotalMass() const
 {
 	return m_hullMass + m_fuelMass;
 }
 
-const double& Step::GetExhaustVelocity() const
+const double& Stage::GetExhaustVelocity() const
 {
 	return m_exhaustVelocity;
 }
 
-const double& Step::GetFuelMassLossPerSecond() const
+const double& Stage::GetBurnRate() const
 {
-	return m_fuelMassLossPerSecond;
+	return m_burnRate;
+}
+
+double Stage::GetThrust() const
+{
+	return m_burnRate * m_exhaustVelocity;
 }

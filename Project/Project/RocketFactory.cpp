@@ -11,12 +11,13 @@ Rocket * RocketFactory::CreateRocket(Planet * startPlanet)
 	Vector2d planetPos = startPlanet->GetPosition();
 	Vector2d planetToMouse = mousePos + ViewHandler::Get()->GetOriginOffset() - planetPos;
 	Vector2d toPlanetSurface = planetToMouse.Normalized() * startPlanet->GetRadius();
+	
 	Vector2d startPosition = planetPos + toPlanetSurface;
-	Vector2d startVelocity = planetToMouse.Normalized();
+	Vector2d startVelocity = startPlanet->GetVelocity();
 	Vector2d startAcceleration = Vector2d(0, 0);
+	Vector2d startDirection = toPlanetSurface.Normalized();
 
-	Rocket* r = new Rocket(startPosition, startVelocity, startAcceleration);
-	r->SetVelocity(0.0, 0.0);
+	Rocket* r = new Rocket(startPosition, startVelocity, startAcceleration, startDirection, startPlanet);
 
 	return r;
 }

@@ -45,7 +45,7 @@ public:
 
 
 	const Vector2d& GetPosition() const;
-	const Vector2d& GetVelocity() const;
+	virtual Vector2d GetVelocity() const;
 	const Vector2d& GetAcceleration() const;
 	double GetMass() const;
 	double GetRadius() const;

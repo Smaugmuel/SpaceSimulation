@@ -28,7 +28,7 @@ OrbitSimulation::OrbitSimulation()
 
 	m_paused = false;
 
-	m_years_per_second = m_time_skip = EARTH_YEAR_PER_SECOND * 100;
+	m_years_per_second = m_time_skip = EARTH_YEAR_PER_SECOND * 5;
 }
 
 OrbitSimulation::~OrbitSimulation()
@@ -63,7 +63,7 @@ void OrbitSimulation::Update(float dt)
 	if (!m_paused)
 	{
 		UpdateMovements(SECONDS_PER_EARTH_YEAR * m_years_per_second * dt);
-		UpdateProjectileAcceleration();
+		UpdateAccelerations(SECONDS_PER_EARTH_YEAR * m_years_per_second * dt);
 	}
 }
 
@@ -114,7 +114,7 @@ void OrbitSimulation::UpdateInput()
 
 void OrbitSimulation::UpdateMovements(float dt)
 {
-	//m_planetSystem->Update(dt);
+	m_planetSystem->Update(dt);
 
 	for (unsigned int i = 0; i < m_projectiles.size(); i++)
 	{
@@ -127,13 +127,12 @@ void OrbitSimulation::UpdateMovements(float dt)
 	}
 }
 
-void OrbitSimulation::UpdateProjectileAcceleration()
+void OrbitSimulation::UpdateAccelerations(float dt)
 {
-	//std::vector<Planet*> planets;
-	//m_planetSystem->GetPlanets(planets);
-
 	for (unsigned int i = 0; i < m_projectiles.size(); i++)
 	{
+		m_projectiles[i]->SetAcceleration(0.0, 0.0);
+
 		for (unsigned int j = 0; j < m_planets.size(); j++)
 		{
 			Vector2d direction = m_planets[j]->GetPosition() - m_projectiles[i]->GetPosition();
@@ -148,8 +147,15 @@ void OrbitSimulation::UpdateProjectileAcceleration()
 
 	for (unsigned int i = 0; i < m_rockets.size(); i++)
 	{
+		m_rockets[i]->SetAcceleration(0.0, 0.0);
+
 		for (unsigned int j = 0; j < m_planets.size(); j++)
 		{
+			if (j != 3)
+			{
+				continue;
+			}
+
 			Vector2d direction = m_planets[j]->GetPosition() - m_rockets[i]->GetPosition();
 			double distance = direction.Length();
 			direction.Normalize();
@@ -158,6 +164,9 @@ void OrbitSimulation::UpdateProjectileAcceleration()
 
 			m_rockets[i]->AddAcceleration(direction * acceleration);
 		}
+
+		m_rockets[i]->UpdateThrust(dt);
+		m_rockets[i]->UpdateRotation();
 	}
 }
 

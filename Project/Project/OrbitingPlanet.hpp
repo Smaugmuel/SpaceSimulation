@@ -1,6 +1,7 @@
 #ifndef ORBITING_PLANET_HPP
 #define ORBITING_PLANET_HPP
 #include "Planet.hpp"
+#include "Vector2.hpp"
 
 class OrbitingPlanet : public Planet
 {
@@ -13,7 +14,8 @@ public:
 	void SetOrbitAngle(double startAngle);
 	void SetOrbitRadius(double radius);
 	void SetOrbitTime(double time);
-	double GetOrbitRadius()const;
+	double GetOrbitRadius() const;
+	Vector2d GetVelocity() const override;
 
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 

@@ -11,18 +11,20 @@ namespace sf
 	class RenderStates;
 }
 
-class Step
+class Planet;
+
+class Stage
 {
 public:
-	Step();
-	~Step();
+	Stage();
+	~Stage();
 
 	void Update(float dt);
 
 	void SetHullMass(double mass);
 	void SetFuelMass(double mass);
 	void SetExhaustVelocity(double ve);
-	void SetFuelMassLossPerSecond(double m);
+	void SetBurnRate(double m);
 
 	void AddFuelMass(double mass);
 
@@ -30,21 +32,21 @@ public:
 	const double& GetFuelMass() const;
 	const double& GetTotalMass() const;
 	const double& GetExhaustVelocity() const;
-	const double& GetFuelMassLossPerSecond() const;
+	const double& GetBurnRate() const;
+	double GetThrust() const;
 
 private:
 	double m_exhaustVelocity;
 	double m_hullMass;
 	double m_fuelMass;
-	double m_fuelMassLossPerSecond;
+	double m_burnRate;
 };
 
 class Rocket : public sf::Drawable
 {
 public:
-	Rocket(Vector2d position, Vector2d velocity, Vector2d acceleration);
-	Rocket(double x, double y, double vx, double vy, double ax, double ay);
-	Rocket();
+	Rocket(Vector2d position, Vector2d velocity, Vector2d acceleration, Vector2d direction, Planet* startPlanet);
+	Rocket(double x, double y, double vx, double vy, double ax, double ay, double dx, double dy, Planet* startPlanet);
 	~Rocket();
 
 	void Update(float dt);
@@ -59,6 +61,7 @@ public:
 	void SetAcceleration(double x, double y);
 	void SetRotation(double rotation);
 	void SetPayloadMass(double mass);
+	void SetOrbitedPlanet(Planet* planet);
 	
 	void ToggleThrust();
 
@@ -69,7 +72,7 @@ public:
 	void AddAcceleration(const Vector2d& v);
 	void AddAcceleration(double x, double y);
 
-	void AddStep(double grossMass, double emptyMass, double specificImpulse, double burnTime);
+	void AddStage(double grossMass, double emptyMass, double specificImpulse, double burnTime);
 
 	const Vector2d& GetPosition() const;
 	const Vector2d& GetVelocity() const;
@@ -84,14 +87,17 @@ private:
 
 	sf::CircleShape m_triangle;
 
+	Planet* m_orbitedPlanet;
+
 	Vector2d m_position;
 	Vector2d m_velocity;
 	Vector2d m_acceleration;
-	double m_rotation;
+	Vector2d m_direction;		// Direction of triangle
+	Vector2d m_startDirection;
 
 	double m_payloadMass;
 
-	std::list<Step*> m_steps;
+	std::list<Stage*> m_stages;
 
 	bool m_isThrusting;
 };
