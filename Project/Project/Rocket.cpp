@@ -20,10 +20,14 @@ Rocket::Rocket(double x, double y, double vx, double vy, double ax, double ay, d
 	// Data from Saturn V and its first stage
 	m_payloadMass = 140000;
 	AddStage(2290000, 130000, 263, 165);
+	AddStage(496200, 40100, 421, 360);
+	AddStage(123000, 13500, 421, 500);
 
 	m_orbitedPlanet = startPlanet;
 
 	m_isThrusting = true;
+
+	m_flipPreventionCounter = 0;
 
 	m_triangle.setPointCount(3);
 	m_triangle.setRadius(2.0f);
@@ -54,9 +58,6 @@ void Rocket::Update(float dt)
 
 void Rocket::UpdateThrust(float dt)
 {
-	static int counter = 0;
-	counter++;
-
 	if (m_stages.empty())
 	{
 		m_isThrusting = false;
@@ -81,11 +82,6 @@ void Rocket::UpdateThrust(float dt)
 		}
 
 		m_acceleration += m_direction * acceleration;
-
-		if (m_acceleration.x < 0.0 || m_acceleration.y < 0.0)
-		{
-			m_direction = m_direction;
-		}
 	}
 }
 
@@ -94,8 +90,17 @@ void Rocket::UpdateRotation()
 	// Velocity and acceleration relative to the planet currently orbited
 	Vector2d v_rel = m_velocity - m_orbitedPlanet->GetVelocity();
 
-	// Add acceleration, since relative start velocity is 0
-	m_direction = (v_rel + m_acceleration).Normalized();
+	m_flipPreventionCounter++;
+
+	// Attempt to solve problem where rocket flips shortly after launch
+	if (m_flipPreventionCounter < 500)
+	{
+		m_direction = m_startDirection;
+	}
+	else
+	{
+		m_direction = v_rel.Normalized();
+	}
 
 	int positive = m_direction.y / std::abs(m_direction.y);
 	double rotation = positive * std::acosf(m_direction.x) * 180 / 3.1415927f;

@@ -39,13 +39,13 @@ int main()
 
 		float elapsedTime = 0.0f;
 
-		while (elapsedTime < RENDER_COMPENSATION / FRAME_RATE)
-		{
+		//while (elapsedTime < RENDER_COMPENSATION / FRAME_RATE)
+		//{
 			float deltaTime = time.restart().asSeconds();
 			elapsedTime += deltaTime;
 
 			simulation.Update(deltaTime);
-		}
+		//}
 
 		fps.Update();
 

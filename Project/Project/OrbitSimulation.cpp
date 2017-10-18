@@ -24,11 +24,11 @@ OrbitSimulation::OrbitSimulation()
 {
 	m_planetSystem = new PlanetSystem;
 	m_planetSystem->GetPlanets(m_planets);		// Bad design, see header file
-	m_planetSystem->Update(0.0f);				// "Initialize"
+	//m_planetSystem->Update(0.0f);				// "Initialize"
 
 	m_paused = false;
 
-	m_years_per_second = m_time_skip = EARTH_YEAR_PER_SECOND * 5;
+	m_years_per_second = m_time_skip = EARTH_YEAR_PER_SECOND * 100;
 }
 
 OrbitSimulation::~OrbitSimulation()
@@ -151,11 +151,6 @@ void OrbitSimulation::UpdateAccelerations(float dt)
 
 		for (unsigned int j = 0; j < m_planets.size(); j++)
 		{
-			if (j != 3)
-			{
-				continue;
-			}
-
 			Vector2d direction = m_planets[j]->GetPosition() - m_rockets[i]->GetPosition();
 			double distance = direction.Length();
 			direction.Normalize();

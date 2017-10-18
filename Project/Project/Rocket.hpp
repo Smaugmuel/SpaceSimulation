@@ -100,6 +100,9 @@ private:
 	std::list<Stage*> m_stages;
 
 	bool m_isThrusting;
+
+
+	int m_flipPreventionCounter;
 };
 
 #endif

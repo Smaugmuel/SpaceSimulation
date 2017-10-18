@@ -7,7 +7,7 @@
 
 Rocket * RocketFactory::CreateRocket(Planet * startPlanet)
 {
-	Vector2d mousePos = Input::Get()->MousePositionDouble() * (1.0 / PX_PER_M);
+	Vector2d mousePos = Input::Get()->MousePositionDouble() * M_PER_PX;
 	Vector2d planetPos = startPlanet->GetPosition();
 	Vector2d planetToMouse = mousePos + ViewHandler::Get()->GetOriginOffset() - planetPos;
 	Vector2d toPlanetSurface = planetToMouse.Normalized() * startPlanet->GetRadius();

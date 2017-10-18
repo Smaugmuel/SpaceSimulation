@@ -55,6 +55,13 @@ struct Vector2 final
 
 		return *this;
 	}
+	const Vector2<Type> operator/=(const Type& coefficient)
+	{
+		x /= coefficient;
+		y /= coefficient;
+
+		return *this;
+	}
 
 	const Vector2<Type> operator+(const Vector2<Type>& right) const
 	{
@@ -68,7 +75,11 @@ struct Vector2 final
 	{
 		return Vector2<Type>(x * coefficient, y * coefficient);
 	}
-	
+	const Vector2<Type> operator/(const Type& coefficient) const
+	{
+		return Vector2<Type>(x / coefficient, y / coefficient);
+	}
+
 	const bool operator==(const Vector2<Type>& right) const
 	{
 		return (x == right.x && y == right.y);
