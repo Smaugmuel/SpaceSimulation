@@ -81,8 +81,12 @@ public:
 	const double& GetTotalMass() const;
 
 	const bool& GetIsThrusting() const;
+	Planet* GetOrbitedPlanet() const;
+
+	bool AchievedEscapeVelocityAroundOrbitedPlanet() const;
 
 private:
+	void UpdateColor();
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 	sf::CircleShape m_triangle;
@@ -100,7 +104,8 @@ private:
 	std::list<Stage*> m_stages;
 
 	bool m_isThrusting;
-
+	bool m_reachedLEO;
+	bool m_reachedEscapeVelocity;
 
 	int m_flipPreventionCounter;
 };

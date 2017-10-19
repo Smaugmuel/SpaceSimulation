@@ -44,6 +44,15 @@ PlanetSystem::PlanetSystem()
 	planet->SetOrbitTime(3.15576e7);
 	planet->SetName("Earth");
 
+	// Moon
+	planet = planet->CreateOrbitingPlanet();
+	planet->SetColor(sf::Color(128, 128, 128));
+	planet->SetRadius(1.737e6);
+	planet->SetMass(7.34767309e22);
+	planet->SetOrbitRadius(3.844e8);
+	planet->SetOrbitTime(2.6298e6);		// 365.25 / 12 * 24 * 3600
+	planet->SetName("Moon");
+
 	// Mars
 	planet = m_center->CreateOrbitingPlanet();
 	planet->SetColor(sf::Color(255, 69, 0));

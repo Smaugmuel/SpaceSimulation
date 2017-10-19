@@ -17,8 +17,8 @@ Rocket::Rocket(double x, double y, double vx, double vy, double ax, double ay, d
 	m_acceleration = Vector2d(ax, ay);
 	m_direction = m_startDirection = Vector2d(dx, dy);
 
-	// Data from Saturn V and its first stage
-	m_payloadMass = 140000;
+	// Data from Saturn V
+	m_payloadMass = 4860;
 	AddStage(2290000, 130000, 263, 165);
 	AddStage(496200, 40100, 421, 360);
 	AddStage(123000, 13500, 421, 500);
@@ -26,6 +26,8 @@ Rocket::Rocket(double x, double y, double vx, double vy, double ax, double ay, d
 	m_orbitedPlanet = startPlanet;
 
 	m_isThrusting = true;
+	m_reachedLEO = false;
+	m_reachedEscapeVelocity = false;
 
 	m_flipPreventionCounter = 0;
 
@@ -34,7 +36,7 @@ Rocket::Rocket(double x, double y, double vx, double vy, double ax, double ay, d
 	m_triangle.setOrigin(2.0f, 0.0f);
 	m_triangle.setPosition(x * PX_PER_M, y * PX_PER_M);
 	m_triangle.setScale(1.0f, 2.0f);
-	m_triangle.setFillColor(sf::Color::Magenta);
+	UpdateColor();
 
 	int positive = m_direction.y / std::abs(m_direction.y);
 	double rotation = positive * std::acosf(m_direction.x) * 180 / 3.1415927f;
@@ -54,6 +56,26 @@ void Rocket::Update(float dt)
 {
 	m_position += m_velocity * dt;
 	m_velocity += m_acceleration * dt;
+
+	if (!m_reachedLEO)
+	{
+		double distance = (m_position - m_orbitedPlanet->GetPosition()).Length();
+		double aboveSurface = distance - m_orbitedPlanet->GetRadius();
+		if (aboveSurface > 170000)
+		{
+			m_reachedLEO = true;
+			m_triangle.setFillColor(sf::Color::Blue);
+		}
+	}
+
+	if (!m_reachedEscapeVelocity)
+	{
+		if (AchievedEscapeVelocityAroundOrbitedPlanet())
+		{
+			m_reachedEscapeVelocity = true;
+			m_triangle.setFillColor(sf::Color::Magenta);
+		}
+	}
 }
 
 void Rocket::UpdateThrust(float dt)
@@ -79,6 +101,8 @@ void Rocket::UpdateThrust(float dt)
 		{
 			delete stage;
 			m_stages.pop_front();
+
+			UpdateColor();
 		}
 
 		m_acceleration += m_direction * acceleration;
@@ -90,9 +114,8 @@ void Rocket::UpdateRotation()
 	// Velocity and acceleration relative to the planet currently orbited
 	Vector2d v_rel = m_velocity - m_orbitedPlanet->GetVelocity();
 
-	m_flipPreventionCounter++;
-
 	// Attempt to solve problem where rocket flips shortly after launch
+	m_flipPreventionCounter++;
 	if (m_flipPreventionCounter < 500)
 	{
 		m_direction = m_startDirection;
@@ -101,6 +124,8 @@ void Rocket::UpdateRotation()
 	{
 		m_direction = v_rel.Normalized();
 	}
+
+	//m_direction = m_startDirection;
 
 	int positive = m_direction.y / std::abs(m_direction.y);
 	double rotation = positive * std::acosf(m_direction.x) * 180 / 3.1415927f;
@@ -240,6 +265,42 @@ const double & Rocket::GetTotalMass() const
 const bool & Rocket::GetIsThrusting() const
 {
 	return m_isThrusting;
+}
+
+Planet * Rocket::GetOrbitedPlanet() const
+{
+	return m_orbitedPlanet;
+}
+
+bool Rocket::AchievedEscapeVelocityAroundOrbitedPlanet() const
+{
+	Vector2d v_rel = m_velocity - m_orbitedPlanet->GetVelocity();
+	Vector2d distance = m_position - m_orbitedPlanet->GetPosition();
+
+	double escapeVelocity = std::sqrt(6.67408e-11 * m_orbitedPlanet->GetMass() / distance.Length());
+
+	return v_rel.Length() > escapeVelocity;
+}
+
+void Rocket::UpdateColor()
+{
+	switch (m_stages.size())
+	{
+	case 0:
+		m_triangle.setFillColor(sf::Color::Red);
+		break;
+	case 1:
+		m_triangle.setFillColor(sf::Color(255, 140, 0));	// Orange
+		break;
+	case 2:
+		m_triangle.setFillColor(sf::Color::Yellow);
+		break;
+	case 3:
+		m_triangle.setFillColor(sf::Color::Green);
+		break;
+	default:
+		break;
+	}
 }
 
 void Rocket::draw(sf::RenderTarget & target, sf::RenderStates states) const
