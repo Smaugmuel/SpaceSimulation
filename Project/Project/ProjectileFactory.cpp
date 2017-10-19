@@ -12,7 +12,7 @@ Projectile * ProjectileFactory::CreateProjectile(Planet* startPlanet)
 	Vector2d planetToMouse = mousePos - planetPos;
 	Vector2d toPlanetSurface = planetToMouse.Normalized() * startPlanet->GetRadius();
 	Vector2d startPosition = planetPos + toPlanetSurface;
-	Vector2d startVelocity = planetToMouse * 5.0e-7;
+	Vector2d startVelocity = planetToMouse * 5.0e-7+planetToMouse.Orthogonal()*430;
 
 	Projectile* p = new Projectile(startPosition, startVelocity);
 	p->SetColor(sf::Color::Magenta);
