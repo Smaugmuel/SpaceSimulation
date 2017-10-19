@@ -260,6 +260,7 @@ void Rocket::SetColor(sf::Color color) {
 
 void Rocket::SetRadius(double radius) {
 	m_explodingRadius = radius;
+	m_triangle.setRadius(m_explodingRadius);
 }
 
 double Rocket::GetRadius()const {

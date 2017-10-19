@@ -227,7 +227,7 @@ void OrbitSimulation::detectCrash()
 			Vector2d direction = m_planets[j]->GetPosition() - m_rockets[i]->GetPosition();
 			double distance = direction.Length();
 
-			if (distance < (m_planets[j]->GetRadius()))
+			if (distance < (m_planets[j]->GetRadius())-3000)
 			{
 
 				m_rockets[i]->SetIsCrashed(true);
