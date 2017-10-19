@@ -36,11 +36,16 @@ Rocket::Rocket(double x, double y, double vx, double vy, double ax, double ay, d
 	m_triangle.setOrigin(2.0f, 0.0f);
 	m_triangle.setPosition(x * PX_PER_M, y * PX_PER_M);
 	m_triangle.setScale(1.0f, 2.0f);
+
 	UpdateColor();
+
+	m_isCrasched = false;
 
 	int positive = m_direction.y / std::abs(m_direction.y);
 	double rotation = positive * std::acosf(m_direction.x) * 180 / 3.1415927f;
 	m_triangle.setRotation(90 - rotation);
+	m_timeCrashed = 0;
+	m_explodingRadius = 0;
 }
 
 Rocket::~Rocket()
@@ -301,6 +306,34 @@ void Rocket::UpdateColor()
 	default:
 		break;
 	}
+}
+
+bool Rocket::GetCrashed()const {
+	return m_isCrasched;
+}
+
+void Rocket::SetIsCrashed(bool isCrashed) {
+	m_isCrasched = isCrashed;
+	m_explodingRadius = 1e+6;
+	m_triangle.setPointCount(150);
+
+	if (m_isCrasched)
+	{
+		m_isThrusting = false;
+	}
+}
+
+void Rocket::SetColor(sf::Color color) {
+	m_triangle.setFillColor(color);
+}
+
+void Rocket::SetRadius(double radius) {
+	m_explodingRadius = radius;
+	m_triangle.setRadius(m_explodingRadius);
+}
+
+double Rocket::GetRadius()const {
+	return m_explodingRadius;
 }
 
 void Rocket::draw(sf::RenderTarget & target, sf::RenderStates states) const

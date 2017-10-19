@@ -85,6 +85,12 @@ public:
 
 	bool AchievedEscapeVelocityAroundOrbitedPlanet() const;
 
+	bool GetCrashed() const;
+	void SetIsCrashed(bool isCrashed);
+	void SetColor(sf::Color color);
+	void SetRadius(double radius);
+	double GetRadius()const;
+
 private:
 	void UpdateColor();
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
@@ -104,8 +110,13 @@ private:
 	std::list<Stage*> m_stages;
 
 	bool m_isThrusting;
+
 	bool m_reachedLEO;
 	bool m_reachedEscapeVelocity;
+
+	bool m_isCrasched;
+	int m_timeCrashed;
+	double m_explodingRadius;
 
 	int m_flipPreventionCounter;
 };
