@@ -29,7 +29,7 @@ Rocket::Rocket(double x, double y, double vx, double vy, double ax, double ay, d
 	m_direction = m_startDirection = Vector2d(dx, dy);
 
 	// Data from Saturn V
-	m_payloadMass = 4860;
+	m_payloadMass = 48600;
 	AddStage(2290000, 130000, 263, 165);
 	AddStage(496200, 40100, 421, 360);
 	AddStage(123000, 13500, 421, 500);
@@ -82,7 +82,7 @@ void Rocket::Update(float dt)
 	m_position += m_velocity * dt;
 	m_velocity += m_acceleration * dt;
 
-	/*if (!m_reachedLEO)
+	if (!m_reachedLEO)
 	{
 		double distance = (m_position - m_orbitedPlanet->GetPosition()).Length();
 		double aboveSurface = distance - m_orbitedPlanet->GetRadius();
@@ -90,8 +90,13 @@ void Rocket::Update(float dt)
 		{
 			m_reachedLEO = true;
 			m_triangle.setFillColor(sf::Color::Blue);
+
+
+			// Turn sideways when reaching low earth orbit
+			Vector2d planetToRocket = (m_position - m_orbitedPlanet->GetPosition()).Normalized();
+			m_direction = (planetToRocket.Orthogonal() + planetToRocket * 0.3).Normalized();
 		}
-	}*/
+	}
 
 	if (!m_reachedEscapeVelocity)
 	{
@@ -141,17 +146,30 @@ void Rocket::UpdateRotation()
 	Vector2d v_rel = m_velocity - m_orbitedPlanet->GetVelocity();
 
 	// Attempt to solve problem where rocket flips shortly after launch
-	m_flipPreventionCounter++;
+	//m_flipPreventionCounter++;
 	//if (m_flipPreventionCounter < 5000)
 	//{
-		m_direction = m_startDirection;
+	//m_direction = m_startDirection;
 	/*}
 	else
 	{
 		m_direction = v_rel.Normalized();
 	}*/
 
-	//m_direction = m_startDirection;
+
+	if (m_reachedLEO && !m_stages.empty() && !AchievedEscapeVelocityAroundOrbitedPlanet())
+	{
+		Vector2d planetToRocket = m_position - m_orbitedPlanet->GetPosition();
+		m_direction = (planetToRocket.Orthogonal() + planetToRocket * 0.2).Normalized();
+	}
+
+	//if (m_stages.empty() && !AchievedEscapeVelocityAroundOrbitedPlanet())
+	//{
+	//	// Out of fuel and didn't reach a high enough velocity
+
+	//	Vector2d planetToRocket = m_position - m_orbitedPlanet->GetPosition();
+	//	m_direction = planetToRocket.Orthogonal().Normalized();
+	//}
 
 	int positive = m_direction.y / std::abs(m_direction.y);
 	double rotation = positive * std::acosf(m_direction.x) * 180 / 3.1415927f;
