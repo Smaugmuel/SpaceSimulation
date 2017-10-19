@@ -81,16 +81,16 @@ void OrbitSimulation::UpdateInput()
 {
 	Input::Get()->UpdateInput();
 
-	if (Input::Get()->IsMousePressed(sf::Mouse::Button::Right))
+	if (Input::Get()->IsMousePressed(sf::Mouse::Button::Left))
 	{
 		m_rockets.push_back(RocketFactory::CreateRocket(m_planets[3]));
 		//m_projectiles.push_back(ProjectileFactory::CreateProjectile(m_planets[3]));
 	}
-	//if (Input::Get()->IsMousePressed(sf::Mouse::Button::Right))
-	//{
-	//	m_rockets.push_back(RocketFactory::CreateRocket(m_planets[5]));
-	//	//m_projectiles.push_back(ProjectileFactory::CreateProjectile(m_planets[5]));
-	//}
+	if (Input::Get()->IsMousePressed(sf::Mouse::Button::Right))
+	{
+		//m_rockets.push_back(RocketFactory::CreateRocket(m_planets[3]));
+		m_projectiles.push_back(ProjectileFactory::CreateProjectile(m_planets[3]));
+	}
 
 	if (Input::Get()->IsKeyPressed(sf::Keyboard::Key::Space))
 	{
@@ -202,54 +202,61 @@ void OrbitSimulation::draw(sf::RenderTarget & target, sf::RenderStates states) c
 
 void OrbitSimulation::detectCrash() 
 {
-	for (unsigned int i = 0; i < m_projectiles.size(); i++) 
+	for (unsigned int j = 0; j < m_planets.size(); j++)
 	{
-		for (unsigned int j=0; j < m_planets.size(); j++) 
+		for (unsigned int i = 0; i < m_projectiles.size(); i++)
 		{
 			Vector2d direction = m_planets[j]->GetPosition() - m_projectiles[i]->GetPosition();
-			double distance = direction.Length();
 
-			if (distance < (m_planets[j]->GetRadius()))
+			if (direction.Length() < m_planets[j]->GetRadius())
 			{
-			
-				m_projectiles[i]->SetIsCrashed(true);
+
+				//m_projectiles[i]->SetIsCrashed(true);
+				delete m_projectiles[i];
+				m_projectiles.erase(m_projectiles.begin() + i);
+				i--;
 
 				//delete m_projectiles[i];
 				//m_projectiles.erase(m_projectiles.begin() + i);
-			
+
 				//i--;
 			}
 		}
 	}
 
-	for (unsigned int i = 0; i < m_projectiles.size(); i++)
+	//for (unsigned int i = 0; i < m_projectiles.size(); i++)
+	//{
+	//	if (m_projectiles[i]->GetIsCrashed())
+	//	{
+	//		m_projectiles[i]->SetAcceleration(0, 0);
+	//		m_projectiles[i]->SetVelocity(0, 0);
+
+	//		m_projectiles[i]->SetColor(sf::Color::Red);
+	//		m_projectiles[i]->SetRadius(m_projectiles[i]->GetRadius() + 2.0e4);
+	//		if (m_projectiles[i]->GetRadius() > 5.0e7)
+	//		{
+	//			delete m_projectiles[i];
+	//			m_projectiles.erase(m_projectiles.begin() + i);
+	//			i--;
+	//		}
+	//	}
+	//}
+
+
+	for (unsigned int j = 0; j < m_planets.size(); j++)
 	{
-		if (m_projectiles[i]->GetIsCrashed())
-		{
-			m_projectiles[i]->SetAcceleration(0, 0);
-			m_projectiles[i]->SetVelocity(0, 0);
-
-			m_projectiles[i]->SetColor(sf::Color::Red);
-			m_projectiles[i]->SetRadius(m_projectiles[i]->GetRadius() + 2.0e4);
-			if (m_projectiles[i]->GetRadius() > 5.0e7)
-			{
-				delete m_projectiles[i];
-				m_projectiles.erase(m_projectiles.begin() + i);
-				i--;
-			}
-		}
-	}
-
-
-	for (unsigned int i = 0; i < m_rockets.size(); i++) {
-		for (unsigned int j = 0; j < m_planets.size(); j++)
+		for (unsigned int i = 0; i < m_rockets.size(); i++)
 		{
 			Vector2d direction = m_planets[j]->GetPosition() - m_rockets[i]->GetPosition();
 			double distance = direction.Length();
 
-			if (distance < (m_planets[j]->GetRadius())-30000)
+			if (distance < (m_planets[j]->GetRadius()) - 30000)
 			{
-				m_rockets[i]->SetIsCrashed(true);
+				//m_rockets[i]->SetIsCrashed(true);
+
+				delete m_rockets[i];
+				m_rockets.erase(m_rockets.begin() + i);
+				i--;
 
 				//delete m_projectiles[i];
 				//m_projectiles.erase(m_projectiles.begin() + i);
@@ -258,21 +265,21 @@ void OrbitSimulation::detectCrash()
 			}
 		}
 	}
-	for (unsigned int i = 0; i < m_rockets.size(); i++)
-	{
-		if (m_rockets[i]->GetCrashed())
-		{
-			m_rockets[i]->SetAcceleration(0, 0);
-			m_rockets[i]->SetVelocity(0, 0);
+	//for (unsigned int i = 0; i < m_rockets.size(); i++)
+	//{
+	//	if (m_rockets[i]->GetCrashed())
+	//	{
+	//		m_rockets[i]->SetAcceleration(0, 0);
+	//		m_rockets[i]->SetVelocity(0, 0);
 
-			m_rockets[i]->SetColor(sf::Color::Red);
-			m_rockets[i]->SetRadius(m_rockets[i]->GetRadius() + 2.0e4);
-			/*if (m_rockets[i]->GetRadius() > 5.0e7)
-			{*/
-				delete m_rockets[i];
-				m_rockets.erase(m_rockets.begin() + i);
-				i--;
-			//}
-		}
-	}
+	//		m_rockets[i]->SetColor(sf::Color::Red);
+	//		m_rockets[i]->SetRadius(m_rockets[i]->GetRadius() + 2.0e4);
+	//		/*if (m_rockets[i]->GetRadius() > 5.0e7)
+	//		{*/
+	//			delete m_rockets[i];
+	//			m_rockets.erase(m_rockets.begin() + i);
+	//			i--;
+	//		//}
+	//	}
+	//}
 }

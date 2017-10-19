@@ -142,34 +142,11 @@ void Rocket::UpdateThrust(float dt)
 
 void Rocket::UpdateRotation()
 {
-	// Velocity and acceleration relative to the planet currently orbited
-	Vector2d v_rel = m_velocity - m_orbitedPlanet->GetVelocity();
-
-	// Attempt to solve problem where rocket flips shortly after launch
-	//m_flipPreventionCounter++;
-	//if (m_flipPreventionCounter < 5000)
-	//{
-	//m_direction = m_startDirection;
-	/*}
-	else
-	{
-		m_direction = v_rel.Normalized();
-	}*/
-
-
 	if (m_reachedLEO && !m_stages.empty() && !AchievedEscapeVelocityAroundOrbitedPlanet())
 	{
 		Vector2d planetToRocket = m_position - m_orbitedPlanet->GetPosition();
 		m_direction = (planetToRocket.Orthogonal() + planetToRocket * 0.2).Normalized();
 	}
-
-	//if (m_stages.empty() && !AchievedEscapeVelocityAroundOrbitedPlanet())
-	//{
-	//	// Out of fuel and didn't reach a high enough velocity
-
-	//	Vector2d planetToRocket = m_position - m_orbitedPlanet->GetPosition();
-	//	m_direction = planetToRocket.Orthogonal().Normalized();
-	//}
 
 	int positive = m_direction.y / std::abs(m_direction.y);
 	double rotation = positive * std::acosf(m_direction.x) * 180 / 3.1415927f;

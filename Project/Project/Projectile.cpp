@@ -193,6 +193,7 @@ void Projectile::draw(sf::RenderTarget & target, sf::RenderStates states) const
 	Vector2d screenPos = (m_position - ViewHandler::Get()->GetOriginOffset())* PX_PER_M;
 
 	circle.setPosition(screenPos.x, WNDH - screenPos.y);
+	circle.setScale(sf::Vector2f(1.0f, 1.0f) * (ViewHandler::Get()->GetViewSize().x * 0.002f));
 
 	target.draw(circle, states);
 }
