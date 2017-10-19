@@ -227,7 +227,7 @@ void OrbitSimulation::detectCrash()
 			Vector2d direction = m_planets[j]->GetPosition() - m_rockets[i]->GetPosition();
 			double distance = direction.Length();
 
-			if (distance < (m_planets[j]->GetRadius())-3000)
+			if (distance < (m_planets[j]->GetRadius())-30000)
 			{
 
 				m_rockets[i]->SetIsCrashed(true);
@@ -248,12 +248,12 @@ void OrbitSimulation::detectCrash()
 
 			m_rockets[i]->SetColor(sf::Color::Red);
 			m_rockets[i]->SetRadius(m_rockets[i]->GetRadius() + 2.0e4);
-			if (m_rockets[i]->GetRadius() > 5.0e7)
-			{
+			/*if (m_rockets[i]->GetRadius() > 5.0e7)
+			{*/
 				delete m_rockets[i];
 				m_rockets.erase(m_rockets.begin() + i);
 				i--;
-			}
+			//}
 		}
 	}
 }

@@ -1,6 +1,7 @@
 #ifndef ROCKET_HPP
 #define ROCKET_HPP
 #include <list>
+#include <memory>
 #include "Vector2.hpp"
 #include <SFML\Graphics\Drawable.hpp>
 #include <SFML\Graphics\CircleShape.hpp>
@@ -9,6 +10,8 @@ namespace sf
 {
 	class RenderTarget;
 	class RenderStates;
+	class Text;
+	class Font;
 }
 
 class Planet;
@@ -52,6 +55,7 @@ public:
 	void Update(float dt);
 	void UpdateThrust(float dt);
 	void UpdateRotation();
+	void UpdateText();
 
 	void SetPosition(const Vector2d& position);
 	void SetPosition(double x, double y);
@@ -119,6 +123,9 @@ private:
 	double m_explodingRadius;
 
 	int m_flipPreventionCounter;
+
+	std::unique_ptr<sf::Text> m_text;
+	std::unique_ptr<sf::Font> m_font;
 };
 
 #endif
