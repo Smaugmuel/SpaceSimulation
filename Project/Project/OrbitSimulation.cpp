@@ -219,4 +219,41 @@ void OrbitSimulation::detectCrash()
 			}
 		}
 	}
+
+
+	for (unsigned int i = 0; i < m_rockets.size(); i++) {
+		for (unsigned int j = 0; j < m_planets.size(); j++)
+		{
+			Vector2d direction = m_planets[j]->GetPosition() - m_rockets[i]->GetPosition();
+			double distance = direction.Length();
+
+			if (distance < (m_planets[j]->GetRadius()))
+			{
+
+				m_rockets[i]->SetIsCrashed(true);
+
+				//delete m_projectiles[i];
+				//m_projectiles.erase(m_projectiles.begin() + i);
+
+				//i--;
+			}
+		}
+	}
+	for (unsigned int i = 0; i < m_rockets.size(); i++)
+	{
+		if (m_rockets[i]->GetCrashed())
+		{
+			m_rockets[i]->SetAcceleration(0, 0);
+			m_rockets[i]->SetVelocity(0, 0);
+
+			m_rockets[i]->SetColor(sf::Color::Red);
+			m_rockets[i]->SetRadius(m_rockets[i]->GetRadius() + 2.0e4);
+			if (m_rockets[i]->GetRadius() > 5.0e7)
+			{
+				delete m_rockets[i];
+				m_rockets.erase(m_rockets.begin() + i);
+				i--;
+			}
+		}
+	}
 }

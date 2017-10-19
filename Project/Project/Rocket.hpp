@@ -81,7 +81,11 @@ public:
 	const double& GetTotalMass() const;
 
 	const bool& GetIsThrusting() const;
-
+	bool GetCrashed() const;
+	void SetIsCrashed(bool isCrashed);
+	void SetColor(sf::Color color);
+	void SetRadius(double radius);
+	double GetRadius()const;
 private:
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
@@ -100,8 +104,9 @@ private:
 	std::list<Stage*> m_stages;
 
 	bool m_isThrusting;
-
-
+	bool m_isCrasched;
+	int m_timeCrashed;
+	double m_explodingRadius;
 	int m_flipPreventionCounter;
 };
 
