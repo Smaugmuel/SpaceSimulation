@@ -1,9 +1,20 @@
 #include "Rocket.hpp"
-#include <SFML\Graphics\RenderTarget.hpp>
-#include <SFML\Graphics\RenderStates.hpp>
 #include "SystemInformation.hpp"
 #include "ViewHandler.hpp"
 #include "Planet.hpp"
+
+#include <SFML\Graphics\RenderTarget.hpp>
+#include <SFML\Graphics\RenderStates.hpp>
+#include <SFML\Graphics\Text.hpp>
+#include <SFML\Graphics\Font.hpp>
+#include <sstream>
+#include <iomanip>
+#include <locale>
+
+struct num_grouping: std::numpunct<char> {
+	char do_thousands_sep() const { return ','; }
+	std::string do_grouping() const { return "\03"; }
+};
 
 Rocket::Rocket(Vector2d position, Vector2d velocity, Vector2d acceleration, Vector2d direction, Planet* startPlanet)
 	: Rocket::Rocket(position.x, position.y, velocity.x, velocity.y, acceleration.x, acceleration.y, direction.x, direction.y, startPlanet)
@@ -18,7 +29,7 @@ Rocket::Rocket(double x, double y, double vx, double vy, double ax, double ay, d
 	m_direction = m_startDirection = Vector2d(dx, dy);
 
 	// Data from Saturn V and its first stage
-	m_payloadMass = 140000;
+	m_payloadMass = 120000;
 	AddStage(2290000, 130000, 263, 165);
 	AddStage(496200, 40100, 421, 360);
 	AddStage(123000, 13500, 421, 500);
@@ -31,7 +42,7 @@ Rocket::Rocket(double x, double y, double vx, double vy, double ax, double ay, d
 
 	m_triangle.setPointCount(3);
 	m_triangle.setRadius(2.0f);
-	m_triangle.setOrigin(2.0f, 0.0f);
+	m_triangle.setOrigin(2.0f, 2.0f);
 	m_triangle.setPosition(x * PX_PER_M, y * PX_PER_M);
 	m_triangle.setScale(1.0f, 2.0f);
 	m_triangle.setFillColor(sf::Color::Magenta);
@@ -39,6 +50,15 @@ Rocket::Rocket(double x, double y, double vx, double vy, double ax, double ay, d
 	int positive = m_direction.y / std::abs(m_direction.y);
 	double rotation = positive * std::acosf(m_direction.x) * 180 / 3.1415927f;
 	m_triangle.setRotation(90 - rotation);
+
+	m_font = std::make_unique<sf::Font>();
+	m_text = std::make_unique<sf::Text>();
+
+	m_font->loadFromFile("../Assets/cour.ttf");
+	m_text->setFont(*m_font);
+	m_text->setColor(sf::Color::White);
+	UpdateText();
+	m_text->setOrigin(m_text->getLocalBounds().width / 2.0f, -m_text->getLocalBounds().height / 2.0f);
 }
 
 Rocket::~Rocket()
@@ -54,6 +74,8 @@ void Rocket::Update(float dt)
 {
 	m_position += m_velocity * dt;
 	m_velocity += m_acceleration * dt;
+
+	UpdateText();
 }
 
 void Rocket::UpdateThrust(float dt)
@@ -106,6 +128,20 @@ void Rocket::UpdateRotation()
 	double rotation = positive * std::acosf(m_direction.x) * 180 / 3.1415927f;
 	
 	m_triangle.setRotation(90 - rotation);
+}
+
+void Rocket::UpdateText()
+{
+	double velocity = (m_velocity - m_orbitedPlanet->GetVelocity()).Length();
+	double distanceToEarth = ((m_position - m_orbitedPlanet->GetPosition()).Length() - m_orbitedPlanet->GetRadius()) * 0.001;
+
+	std::ostringstream ss;
+	ss.imbue(std::locale(ss.getloc(), new num_grouping));
+	ss << "v_e: " << std::right << std::setfill(' ') << std::setw(9) << std::setprecision(0) << std::fixed << velocity << "m/s \n";
+	ss << "v_s: " << std::right << std::setfill(' ') << std::setw(9) << std::setprecision(0) << std::fixed << m_velocity.Length() << "m/s \n";
+	ss << "d_e: " << std::right << std::setfill(' ') << std::setw(9) << std::setprecision(0) << std::fixed << distanceToEarth << "km";
+
+	this->m_text->setString(ss.str());
 }
 
 void Rocket::SetPosition(const Vector2d & position)
@@ -251,7 +287,14 @@ void Rocket::draw(sf::RenderTarget & target, sf::RenderStates states) const
 	triangle.setScale(sf::Vector2f(1.0f, 2.0f) * (ViewHandler::Get()->GetViewSize().x * 0.002f));
 
 	target.draw(triangle, states);
+
+	m_text->setScale(ViewHandler::Get()->GetViewSize() * 0.0004f);
+	m_text->setPosition(screenPos.x, WNDH - screenPos.y);
+
+	target.draw(*m_text, states);
 }
+
+
 
 
 
