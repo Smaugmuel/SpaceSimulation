@@ -26,6 +26,8 @@ public:
 
 	void SetWindow(sf::RenderWindow* window);
 	void SetView(sf::View* view);
+	void SetHUDView(sf::View* view);
+	void SetViewToWindow(sf::View* view);
 	void SetEvent(sf::Event* event);
 
 	const sf::Vector2f& GetMouseWindowPixelPosition() const;
@@ -33,11 +35,13 @@ public:
 
 	const Vector2d& GetOriginOffset() const;
 	void UpdateOriginOffset(const sf::Vector2f& delta);
+	
+	sf::View* m_view;
+	sf::View* m_hud_view;
 private:
 	Vector2d m_origin_offset;
 
 	sf::RenderWindow* m_window;
-	sf::View* m_view;
 	sf::Event* m_event;
 };
 

@@ -18,6 +18,7 @@ int main()
 	settings.antialiasingLevel = 16;
 	sf::RenderWindow window(sf::VideoMode(WNDW, WNDH), "PhysicsTest", sf::Style::Default, settings);
 	sf::View view = window.getDefaultView();
+	sf::View hudView = window.getDefaultView();
 	view.zoom(1.5e9f);
 	sf::Clock time;
 	sf::Event event;
@@ -28,6 +29,7 @@ int main()
 
 	ViewHandler::Get()->SetWindow(&window);
 	ViewHandler::Get()->SetView(&view);
+	ViewHandler::Get()->SetHUDView(&hudView);
 	ViewHandler::Get()->SetEvent(&event);
 
 	OrbitSimulation simulation;

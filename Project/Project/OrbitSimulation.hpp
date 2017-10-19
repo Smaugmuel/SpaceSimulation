@@ -2,11 +2,14 @@
 #define ORBIT_SIMULATION_HPP
 #include <SFML\Graphics\Drawable.hpp>
 #include <vector>
+#include <memory>
 
 namespace sf
 {
 	class RenderTarget;
 	class RenderStates;
+	class Font;
+	class Text;
 }
 class PlanetSystem;
 class Projectile;
@@ -36,6 +39,9 @@ private:
 	bool m_paused;
 	double m_years_per_second;
 	double m_time_skip;
+
+	std::unique_ptr<sf::Text> m_hud_text;
+	std::unique_ptr<sf::Font> m_font;
 };
 
 #endif

@@ -80,9 +80,19 @@ void ViewHandler::SetView(sf::View* view)
 	m_view = view;
 }
 
+void ViewHandler::SetHUDView(sf::View* view)
+{
+	m_hud_view = view;
+}
+
 void ViewHandler::SetEvent(sf::Event* event)
 {
 	m_event = event;
+}
+
+void ViewHandler::SetViewToWindow(sf::View* view)
+{
+	m_window->setView(*view);
 }
 
 const Vector2d& ViewHandler::GetOriginOffset() const

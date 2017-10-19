@@ -142,14 +142,14 @@ void Rocket::UpdateRotation()
 
 	// Attempt to solve problem where rocket flips shortly after launch
 	m_flipPreventionCounter++;
-	if (m_flipPreventionCounter < 500)
-	{
+	//if (m_flipPreventionCounter < 5000)
+	//{
 		m_direction = m_startDirection;
-	}
+	/*}
 	else
 	{
 		m_direction = v_rel.Normalized();
-	}
+	}*/
 
 	//m_direction = m_startDirection;
 

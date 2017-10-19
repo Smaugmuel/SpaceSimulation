@@ -109,6 +109,8 @@ private:
 	Vector2d m_direction;		// Direction of triangle
 	Vector2d m_startDirection;
 
+	Vector2d m_engine_acc_direction;
+
 	double m_payloadMass;
 
 	std::list<Stage*> m_stages;

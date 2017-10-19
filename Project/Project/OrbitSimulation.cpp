@@ -12,12 +12,14 @@
 #include "SystemInformation.hpp"
 
 #include "Input.hpp"
+#include "ViewHandler.hpp"
 #include <SFML\Window\Mouse.hpp>
 #include <SFML\Window\Keyboard.hpp>
 
 #include <SFML\Graphics\RenderTarget.hpp>
 #include <SFML\Graphics\RenderStates.hpp>
 
+#include <sstream>
 #include <iostream>
 
 OrbitSimulation::OrbitSimulation()
@@ -28,7 +30,15 @@ OrbitSimulation::OrbitSimulation()
 
 	m_paused = false;
 
-	m_years_per_second = m_time_skip = EARTH_YEAR_PER_SECOND * 100;
+	m_years_per_second = m_time_skip = EARTH_YEAR_PER_SECOND * 10;
+
+	m_font = std::make_unique<sf::Font>();
+	m_hud_text = std::make_unique<sf::Text>();
+
+	m_font->loadFromFile("../Assets/cour.ttf");
+	m_hud_text->setFont(*m_font);
+	m_hud_text->setPosition(0.0f, 0.0f);
+	m_hud_text->setColor(sf::Color::White);
 }
 
 OrbitSimulation::~OrbitSimulation()
@@ -178,6 +188,16 @@ void OrbitSimulation::draw(sf::RenderTarget & target, sf::RenderStates states) c
 	{
 		target.draw(*m_rockets[i], states);
 	}
+
+	// Draw hud
+	std::ostringstream ss;
+	ss << m_years_per_second * SECONDS_PER_EARTH_YEAR << "x real time\n";
+	ss << m_years_per_second * SECONDS_PER_EARTH_YEAR / 3600 << " hours/second";
+	m_hud_text->setString(ss.str());
+
+	ViewHandler::Get()->SetViewToWindow(ViewHandler::Get()->m_hud_view);
+	target.draw(*m_hud_text, states);
+	ViewHandler::Get()->SetViewToWindow(ViewHandler::Get()->m_view);
 }
 
 void OrbitSimulation::detectCrash() 
@@ -229,7 +249,6 @@ void OrbitSimulation::detectCrash()
 
 			if (distance < (m_planets[j]->GetRadius())-30000)
 			{
-
 				m_rockets[i]->SetIsCrashed(true);
 
 				//delete m_projectiles[i];
